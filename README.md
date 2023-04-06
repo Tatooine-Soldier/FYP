@@ -4,7 +4,7 @@
 ### Frontend  
 -VueJS  
   -vue (version 3.2.13): Used to access Vue lifecycle hooks and methods  
-  -googlemaps/js-api-loader (version 1.15.1): Used to load Google Maps API 
+  -googlemaps/js-api-loader (version 1.15.1): Used to load Google Maps API  
   -axios (version 1.2.2): Used to issue Axios API requests  
 ### Backend  
 -Golang  
