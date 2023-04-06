@@ -1,0 +1,139 @@
+2023/04/05 15:04:55 Flights on this date:
+2023/04/05 15:04:55 Flight Number: 80452
+2023/04/05 15:04:55 Flight Number: 57360
+2023/04/05 15:04:55 Flight Number: 16522
+2023/04/05 15:04:55 Flight Number: 35660
+2023/04/05 15:04:55 Flight Number: 71015
+2023/04/05 15:04:55 Flight Number: 76276
+2023/04/05 15:04:55 Flight Number: 35231
+2023/04/05 15:04:55 Flight Number: 58293
+2023/04/05 15:04:55 Flight Number: 99514
+2023/04/05 15:04:55 Flight Number: 71232
+2023/04/05 15:04:55 Flight Number: 16888
+2023/04/05 15:04:55 Flight Number: 74336
+2023/04/05 15:04:57 
+#################################
+ 
+2023/04/05 15:04:57 Checking flights occuring within the same subgrid(altitude) as the intended flight 
+2023/04/05 15:04:57 Flight Number 80452 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 57360 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 16522 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 35660 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 71015 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 76276 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 35231 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 58293 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 99514 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 71232 occurs within the same subgrid
+2023/04/05 15:04:57 Flight Number 74336 occurs within the same subgrid
+2023/04/05 15:04:57 
+#################################
+ 
+2023/04/05 15:04:57 These are the coordinates of the intended flight to check for a collision at:  [{93649 51.89217283096939 -8.501014359275944} {93649 51.8964507 -8.4908813} {93649 51.9464507 -8.4908813} {93649 51.996450700000004 -8.4408813} {93649 52.0464507 -8.3908813} {93649 52.096450700000005 -8.3408813} {93649 52.12899593416322 -8.328144949170449}] 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 80452 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 57360 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 16522 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35660 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71015 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 76276 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35231 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 58293 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 99514 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71232 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 74336 at coordinate {93649 51.89217283096939 -8.501014359275944} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 80452 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 57360 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 16522 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35660 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71015 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 76276 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35231 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 58293 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 99514 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71232 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.8964507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 74336 at coordinate {93649 51.8964507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 80452 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 57360 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.9464507 -8.4908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 16522 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35660 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71015 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 76276 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35231 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 58293 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 99514 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71232 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 74336 at coordinate {93649 51.9464507 -8.4908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 80452 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 57360 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  51.996450700000004 -8.4408813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 16522 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35660 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71015 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 76276 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35231 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 58293 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 99514 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71232 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 74336 at coordinate {93649 51.996450700000004 -8.4408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 80452 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 57360 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  52.0464507 -8.3908813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 16522 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35660 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71015 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 76276 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35231 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 58293 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 99514 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71232 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 74336 at coordinate {93649 52.0464507 -8.3908813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 80452 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 57360 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 ---> Coordinate contention at  52.096450700000005 -8.3408813
+2023/04/05 15:04:57    --->Coordinate contention but no timing collision
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 16522 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35660 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71015 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 76276 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35231 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 58293 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 99514 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71232 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 74336 at coordinate {93649 52.096450700000005 -8.3408813} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 80452 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 57360 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 16522 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35660 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71015 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 76276 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 35231 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 58293 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 99514 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 71232 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 Checking for possible coordinate contentions with Flight Number 74336 at coordinate {93649 52.12899593416322 -8.328144949170449} 
+2023/04/05 15:04:57 ---> No contentions predicted with intended flight path and time
+2023/04/05 15:04:57 ---> SCHEDULED flight at 12:00 in sub grid 60 
