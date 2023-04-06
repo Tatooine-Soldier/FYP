@@ -15,6 +15,9 @@ Final Year Project - Web application for planning UAV flight paths
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-github.com/gorilla/sessions (version 1.2.1): Used to create and store user sessions  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-go.mongodb.org/mongo-driver (version 1.10.3): Used to perform CRUD operations on MongoDB  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-github.com/google/uuid (version 1.3.0): Used to create unique user IDs  
+### Database  
+&nbsp;&nbsp;&nbsp;-MongoDB (version 5.0.9)
+
 
 
 
