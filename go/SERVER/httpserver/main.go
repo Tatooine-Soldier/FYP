@@ -82,6 +82,7 @@ type SegmentedFlightData struct {
 	Speed          string        `json:"speed"`
 	EntryPoint     Coordinate    `json:"entryPoint"`
 	ExitPoint      Coordinate    `json:"exitPoint"`
+	UAVName        string        `json:uavName"`
 	ID             string        `json:"id"`
 }
 
@@ -208,7 +209,6 @@ func insertDB(ctx context.Context, client *mongo.Client, user primitive.D, colle
 }
 
 func insertManyDB(ctx context.Context, client *mongo.Client, user []interface{}, collection string) (err error) {
-	//fmt.Printf("\nINSERTING %v\n", user)
 	usersCollection := client.Database("fyp_test").Collection(collection)
 	result, err := usersCollection.InsertMany(ctx, user)
 	if err != nil {
@@ -279,14 +279,6 @@ func getID(ctx context.Context, client *mongo.Client, user Userobj) string {
 }
 
 func loginRequest(w http.ResponseWriter, r *http.Request) {
-	// if r.Method == "GET" {
-	// 	panic("GET method not permitted")
-	// } else {
-	// 	r.ParseForm()
-	// 	fmt.Printf("BEFORE HASH AND STORAGE--> %v %v", r.Form["username"], r.Form["password"])
-	// }
-	// username := r.Form["username"]
-	// password := r.Form["password"]
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		panic(err)
@@ -317,11 +309,10 @@ func loginRequest(w http.ResponseWriter, r *http.Request) {
 		returnLoginSucces(w, r, user, true)
 		return
 	} else {
-		// http.Redirect(w, r, "/login", http.StatusFound)
+
 		returnLoginSucces(w, r, user, false)
 		return
 	}
-	//http.Redirect(w, r, "/planner", http.StatusSeeOther) //this goes to profile page
 }
 
 func returnLoginSucces(w http.ResponseWriter, r *http.Request, user Userobj, success bool) {
@@ -485,18 +476,6 @@ func bsonToUser(bsonObj bson.M) (User, error) {
 	return user, nil
 }
 
-// encode the string array into byte array
-// func encodeToByte(pw []string) []byte {
-// 	buf := &bytes.Buffer{}
-// 	bytedPw := buf.Bytes()
-// 	if len(pw) != 0 {
-// 		gob.NewEncoder(buf).Encode(pw)
-// 		bytedPw = buf.Bytes()
-// 		return bytedPw
-// 	}
-// 	return bytedPw
-// }
-
 func locationRequest(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		panic("GET method not permitted")
@@ -541,20 +520,9 @@ func speedRequest(w http.ResponseWriter, r *http.Request) {
 
 func renderTmpl(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("rendering")
-	// render := render.New()
-	// r.HTML(w, http.StatusOK, "example", nil)
 }
 
 func signupRequest(w http.ResponseWriter, r *http.Request) {
-	// if r.Method == "GET" {
-	// 	panic("GET method not permitted")
-	// } else {
-	// 	r.ParseForm()
-	// 	fmt.Printf("BEFORE HASH AND STORAGE--> %v %v", r.Form["username"], r.Form["password"])
-	// }
-	// username := r.Form["username"]
-	// password := r.Form["password"]
-	// email := r.Form["email"]
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		panic(err)
@@ -582,8 +550,6 @@ func signupRequest(w http.ResponseWriter, r *http.Request) {
 
 	uid := uuid.New()
 	id := fmt.Sprintf("%v", uid)
-	// idInt := rand.Intn(1000)
-	// id := strconv.Itoa(idInt)
 
 	userDoc := bson.D{{"fullName", username}, {"email", email}, {"password", hashedVal.Sum(nil)}, {"id", id}}
 
@@ -597,16 +563,6 @@ func signupRequest(w http.ResponseWriter, r *http.Request) {
 		insertDB(context.TODO(), client, userDoc, "users")
 		returnSignupSuccess(w, r, user, true)
 	}
-
-	// itemByted := encodeToByte(password)
-
-	// hashedVal := sha256.New()
-	// hashedVal.Write([]byte(itemByted))
-
-	// user := bson.D{{"fullName", username}, {"email", email}, {"password", hashedVal.Sum(nil)}}
-	// fmt.Printf("\nINSERTING THIS HASH-->%v\n ", hashedVal.Sum(nil))
-	// insertDB(context.TODO(), client, user, "users")
-	// http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func returnSignupSuccess(w http.ResponseWriter, r *http.Request, user UserSignobj, success bool) {
@@ -660,8 +616,6 @@ func totalRequest(w http.ResponseWriter, r *http.Request) {
 	distance := calculateDistance(floatLat, floatLong)
 	fmt.Printf("%v", distance)
 	getData(w, r, distance)
-	// http.ServeFile(w, r, fmt.Sprintf("../../../src/views/PlanFlightComponent.vue"))
-	// handle(w, r, "planner")
 	http.Redirect(w, r, "/#/planner", 307)
 }
 
@@ -745,22 +699,6 @@ func storeSegmentedFlight(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	//###########################################################
-	//if a flight with same id already exists then delete and replace with this current flight
-	// collection := client.Database("fyp_test").Collection("segmentedFlight")
-	// filter := bson.M{"id": d.ID}
-
-	// docExists, err := documentExists(collection, filter)
-	// if docExists {
-	// 	_, err := collection.DeleteOne(context.Background(), filter)
-	// 	if err != nil {
-	// 		fmt.Printf("err %v", err)
-	// 		return
-	// 	}
-	// 	fmt.Printf("deleted %v", d.ID)
-	// }
-
-	//############################################################
 	slist := []Coordinate{}
 	for _, val := range d.SegmentedList {
 		//fmt.Printf("val---> %v", val)x
@@ -800,7 +738,7 @@ func storeSegmentedFlight(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("\nStoring this object d--> %v | %v | %v\n", d.SubGrid, d.Date, d)
 	gridEntryPoint := bson.D{{"lat", d.EntryPoint.Latitude}, {"lng", d.EntryPoint.Longitude}}
 	gridExitPoint := bson.D{{"lat", d.ExitPoint.Latitude}, {"lng", d.ExitPoint.Longitude}}
-	gridDoc := bson.D{{"id", d.ID}, {"date", d.Date}, {"gridEntryPoint", gridEntryPoint}, {"gridExitPoint", gridExitPoint}, {"subGrid", d.SubGrid}, {"speed", d.Speed}, {"segments", slist}, {"times", timesList}}
+	gridDoc := bson.D{{"id", d.ID}, {"date", d.Date}, {"gridEntryPoint", gridEntryPoint}, {"gridExitPoint", gridExitPoint}, {"subGrid", d.SubGrid}, {"speed", d.Speed}, {"segments", slist}, {"times", timesList}, {"uav", d.UAVName}}
 	err = insertDB(context.TODO(), client, gridDoc, "segmentedFlight")
 	fmt.Printf("\nERROR-->\n", err)
 
@@ -900,9 +838,6 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 	var segs interface{} // for the dates
 	var times interface{}
 	var reservedFlightsOnThisDate []FlightSegmented
-	// var totalList []FlightSegmented
-	//var coordStringList []string
-	//mapCoordinates := make(map[string][]Coordinate)
 
 	for _, doc := range results {
 		var timesStringList []string
@@ -911,21 +846,17 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 		times = doc["times"]
 		for _, x := range times.(primitive.A) {
 			f := x.(primitive.M)
-			//fmt.Printf("\n%v %v %v\n", f["hour"], f["id"], f["minute"])
 			var timeStr = f["hour"].(string) + ":" + f["minute"].(string)
 			timesStringList = append(timesStringList, timeStr)
 		}
 		segs = doc["segments"]
 		for _, y := range segs.(primitive.A) {
 			f := y.(primitive.M)
-			//fmt.Printf("\n%v %v %v\n", f["id"], f["latitude"], f["longitude"])
 			var c Coordinate
 			c.Id = f["id"].(string)
 			c.Latitude = f["latitude"].(string)
 			c.Longitude = f["longitude"].(string)
 			coordStringList = append(coordStringList, c)
-			// var timeStr = f["hour"].(string) + ":" + f["minute"].(string)
-			// timesStringList = append(timesStringList, timeStr)
 		}
 		var c FlightSegmented
 		entry := doc["gridEntryPoint"]
@@ -953,9 +884,6 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 		c.Coordinates = coordStringList
 		c.Times = timesStringList
 		reservedFlightsOnThisDate = append(reservedFlightsOnThisDate, c)
-		// fmt.Printf("\ntimes per flight-->%v\n", timesStringList)
-		// fmt.Printf("\ncoords per flight-->%v\n", coordStringList)
-		//loop for same index length(both lists have same length) and create an object eg. key is time and value is coordinate. Then stick these in a new list
 	}
 
 	log.Printf("Flights on this date:")
@@ -963,7 +891,6 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("\n--> flights on this date: %v", n)
 		log.Printf("Flight Number: %v", n.Id)
 	}
-	// i loop through reserved flights, check if the starting time(1st eleemtn in .times is in the intended time-->if not then move on to next flight else check coordinates)
 
 	//################################################################################################################################
 	//THIS SECTION BELOW FOCUSES ON THE INTENDED FLIGHT DATA, GETS THE INTENDED FLIGHT
@@ -985,8 +912,9 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 	var intendedTimesList []string
 	var intendedCoordsList []Coordinate
 	var intendedFlight FlightSegmented
+	var uavName string = ""
 	for _, d := range resultsIntendedFlight {
-		//fmt.Printf("MATCHING DOC: %v\n", d)
+		uavName = d["uav"].(string)
 		t := d["times"]
 		for _, a := range (t).(primitive.A) {
 			f := a.(primitive.M)
@@ -1018,6 +946,10 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("\n#################################\n ")
 	//##########################################################################################################################
+	if checkUAVAvailability(uavName, intendedFlight) {
+		fmt.Fprint(w, "Cannot fly, UAV scheduled for use in an alternative path at this time")
+	}
+
 	//For each segmented coordinate of intended flight, check all other segmented flights coordinates to see if one is within 120m
 	//If a reserved flight has a coordinate within 120m of a intended flight coordinate, check what time both those coordinates are within that distance at
 	var flightWatchList []FlightSegmented
@@ -1089,53 +1021,6 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("No collisions: Scheduled flight at %v in sub grid %v", intendedFlight.Times[0], intendedFlight.SubGrid)
 		fmt.Fprintf(w, "%v %v %v %v", intendedFlight.Times[0], intendedFlight.Times[len(intendedFlight.Times)-1], intendedFlight.SubGrid, intendedFlight.Speed)
 	}
-	// if len(unavailableTimes) > 0 { //if there is a collision at this time
-	// 	//add 5 minutes onto each of these times and then rerun the schedule function
-	// 	var fiveMinuteWaitSegments []string
-	// 	for _, segTime := range intendedFlight.Times {
-	// 		if len(segTime) < 5 {
-	// 			segTime = segTime[0:3] + "0" + segTime[3:4]
-	// 		}
-	// 		timePlusFive, err := time.Parse("15:04", segTime)
-	// 		if err != nil {
-	// 			fmt.Printf("Error parsing %v as a time: %v", timePlusFive, err)
-	// 			return
-	// 		}
-	// 		timePlusFive = timePlusFive.Add(5 * time.Minute)
-	// 		timeStr := timePlusFive.String()
-	// 		timeStr = timeStr[10:16]
-	// 		fiveMinuteWaitSegments = append(fiveMinuteWaitSegments, timeStr)
-	// 	}
-	// 	fmt.Printf("New 5 min timestamps: %v", fiveMinuteWaitSegments)
-	// 	tempTimes := intendedFlight.Times
-	// 	intendedFlight.Times = fiveMinuteWaitSegments
-	// 	unavailableTimes = schedule(intendedFlight, flightWatchList) //need to update time stored
-
-	// 	//this code below is reached if there is a coord&time collision in the origianl grid and if there is no colllision after waiting 5 minutes in orginial hgrid
-	// 	if len(unavailableTimes) > 0 { //if there is still a delay after waiting 5 mins, check if flight can be allocated to another sub grid
-	// 		intendedFlight.Times = tempTimes //reset time back to original time
-	// 		availableGrids, gridIsEmpty := checkOtherSubGridAvailability(intendedFlight.SubGrid)
-	// 		fmt.Printf("received after function call Empty grids:%v %v", availableGrids, gridIsEmpty)
-	// 		if gridIsEmpty { //if the grid is empty schedule in the grid closest to the flights speed
-	// 			closestGrid := getClosestGridToCurrentSpeed(availableGrids, intendedFlight.Speed)
-	// 			fmt.Printf("Closest empty grid %v", closestGrid)
-	// 			intendedFlight.SubGrid = closestGrid
-	// 			updateFlight(intendedFlight)
-	// 			fmt.Printf("Scheduled flight at %v in sub grid %v ", intendedFlight.Times[0], intendedFlight.SubGrid)
-	// 			fmt.Fprintf(w, "%v %v", intendedFlight.Times[0], intendedFlight.SubGrid)
-	// 		} else {
-	// 			fmt.Printf("No times or grids available at this trajectory. Please change source or destination point")
-	// 			fmt.Fprintf(w, "none none")
-	// 		}
-	// 	} else {
-	// 		fmt.Printf("Scheduled flight(5 mins) at %v in grid %v", intendedFlight.Times[0], intendedFlight.SubGrid)
-	// 		fmt.Fprintf(w, "%v %v", intendedFlight.Times[0], intendedFlight.SubGrid)
-	// 	}
-	// } else {
-	// 	fmt.Printf("intendedFlight.Times %v", intendedFlight.Times)
-	// 	fmt.Printf("No collisions: Scheduled flight at %v in sub grid %v", intendedFlight.Times[0], intendedFlight.SubGrid)
-	// 	fmt.Fprintf(w, "%v %v", intendedFlight.Times[0], intendedFlight.SubGrid)
-	// }
 
 }
 
@@ -1344,7 +1229,7 @@ func calculateCoordDistance(lat1 float64, lng1 float64, lat2 float64, lng2 float
 	return dist
 }
 
-//need to convert the string times into actual time objects and see if theres a collision 5 minutes on either side(before and after)
+//need to convert the string times into actual time objects and see if theres a collision 3 minutes on either side(before and after)
 func checkTimeCollisions(intendedTime string, reservedTime string, date string) bool {
 	//need to add "0" before time with only one minute digit
 	fmt.Printf("both times", reservedTime, intendedTime)
@@ -1365,8 +1250,6 @@ func checkTimeCollisions(intendedTime string, reservedTime string, date string) 
 		fmt.Println("Error parsing time:", err)
 	}
 	intendedEpochTime := t.Unix()
-	// fiveMinutesBefore := (intendedEpochTime - 5*60*1000)
-	// fiveMinutesAfter := (intendedEpochTime + 5*60*1000)
 
 	fullReserved := date + " " + reservedTime + ":00"
 	f, err := time.Parse(layout, fullReserved)
@@ -1377,34 +1260,25 @@ func checkTimeCollisions(intendedTime string, reservedTime string, date string) 
 
 	fmt.Printf("Checking %v %v", fullIntended, fullReserved)
 
-	//check if UAV passes through this coordinate five five minutes(60*5=300) befor or after the intended flight, this ensures no collision if there is an unexpected delay
-	if math.Abs(float64(reservedEpochTime-intendedEpochTime)) <= 300 {
+	//check if UAV passes through this coordinate three minutes(60*3=180) befor or after the intended flight, this ensures no collision if there is an unexpected delay
+	if math.Abs(float64(reservedEpochTime-intendedEpochTime)) <= 180 {
 		fmt.Printf("Gap ahead of 5 minutes %v %v %v\n", reservedTime, intendedTime, math.Abs(float64(reservedEpochTime-intendedEpochTime)))
 		log.Printf("-->Timing contention at %v %v, times too close in proximity", intendedTime, reservedTime)
 		return true
 	}
-	if math.Abs(float64(intendedEpochTime-reservedEpochTime)) <= 300 {
+	if math.Abs(float64(intendedEpochTime-reservedEpochTime)) <= 180 {
 		fmt.Printf("Gap behind of 5 minutes %v %v %v\n", reservedTime, intendedTime, math.Abs(float64(intendedEpochTime-reservedEpochTime)))
 		log.Printf("-->Timing contention at %v %v, times too close in proximity", intendedTime, reservedTime)
 		return true
 	}
 
-	if intendedTime == reservedTime { //need to expand this 5 minutes either side(before and after)
+	if intendedTime == reservedTime { //need to expand this 3 minutes either side(before and after)
 		log.Printf("-->Timing contention at %v %v", intendedTime, reservedTime)
 		return true
 	}
 
 	fmt.Printf("\nNO TIME COLLISION --> %v\n", math.Abs(float64(reservedEpochTime-intendedEpochTime)))
 	return false
-
-	// reservedTimes := reserved.Times
-	// for _, time := range reservedTimes {
-	// 	if time == intendedTime {
-	// 		fmt.Printf("Collision at this time: %v %v", time, intendedTime)
-	// 		return true
-	// 	}
-	// }
-	// return false
 }
 
 func checkSubGridLevel(intendedSubGrid string, reservedSubGrid string) bool {
@@ -1441,36 +1315,31 @@ func getClosestGridToCurrentSpeed(grid []string, speed string) string {
 
 }
 
-// func checkSubGridLevel(intendedID string, reservedID string) bool {
-// 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
-// 	if err != nil {
-// 		panic(err)
-// 	}
+func checkUAVAvailability(uavName string, intendedFlight FlightSegmented) bool {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	if err != nil {
+		panic(err)
+	}
 
-// 	collection := client.Database("fyp_test").Collection("flights")
-// 	filter := bson.M{"id": intendedID}
-// 	var flight bson.M
-// 	err = collection.FindOne(context.Background(), filter).Decode(&flight)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	intendedSubGrid := flight["subGridLayer"].(string)
+	collection := client.Database("fyp_test").Collection("flights")
 
-// 	filter = bson.M{"id": reservedID}
-// 	err = collection.FindOne(context.Background(), filter).Decode(&flight)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	reservedSubGrid := flight["subGridLayer"].(string)
+	startTime := intendedFlight.Times[0]
+	endTime := intendedFlight.Times[len(intendedFlight.Times)-1]
+	id := intendedFlight.Id
 
-// 	fmt.Printf("\nComparing grid levels %v %v", intendedSubGrid, reservedSubGrid)
-// 	if intendedSubGrid == reservedSubGrid {
-// 		fmt.Println("same sub grid level")
-// 		return true
-// 	}
-// 	fmt.Println("disfferent sub grids")
-// 	return false
-// }
+	filter := bson.M{"uav": uavName, "id": id, "date": bson.M{"$gt": startTime, "$lt": endTime}}
+	cursor, err := collection.Find(context.Background(), filter)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer cursor.Close(context.Background())
+
+	if cursor.Next(context.Background()) {
+		// cursor is not empty
+		return true
+	}
+	return false
+}
 
 func dateTimeCheck(hour string, minute string) {
 	if len(minute) < 2 {
@@ -1504,11 +1373,6 @@ func getUsername(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	log.Println("BODY in getUsername:", string(body))
-
-	// client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
-	// if err != nil {
-	// 	panic(err)
-	// }
 }
 
 func fetchGridCoordinates(w http.ResponseWriter, r *http.Request) {
@@ -1537,21 +1401,9 @@ func fetchGridCoordinates(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	//fmt.Printf("%v results", results)
-
-	// var coords []string
-	// for _, doc := range results {
-	// 	stringDoc := fmt.Sprint(doc) + ","
-	// 	fmt.Printf(stringDoc)
-	// 	coords = append(coords, fmt.Sprint(stringDoc))
-	// 	fmt.Fprintf(w, stringDoc)
-	// }
-
-	//need this to be json
 	var temp []interface{}
 	for _, doc := range results {
 		temp = append(temp, doc)
-		//fmt.Printf("doc:%v \nc.Id:%v\n\n", doc, c.Id)
 	}
 	c := &GridofCoordinates{
 		Coordinates: temp,
@@ -1619,24 +1471,15 @@ func storeGridCoordinates(w http.ResponseWriter, r *http.Request) {
 			coord.Id = t["id"].(string)
 			coord.Latitude = t["lat"].(string)
 			coord.Longitude = t["lng"].(string)
-			//fmt.Printf("coord: %v\t %v\t %v\n", coord.Id, coord.Latitude, coord.Longitude)
 
 			//build mongo record to store all coordinates in the grid
 			gridCoord := bson.D{{"lat", coord.Latitude}, {"lng", coord.Longitude}}
 			gridDoc := bson.D{{"id", coord.Id}, {"coordinate", gridCoord}, {"layer", layer}, {"gridID", gridID}}
 			err = insertDB(context.TODO(), client, gridDoc, "grid")
-			//fmt.Printf("\nERROR storing grid coordinates-->\n", err)
-
-			//if the coordinate is located on the border of the grid then it will have a queue allocated to it
-			//as it will become an entry point into the grid from No Man's Land
-			// if containsBorderNode(coord, grid.BorderCoords) {
-			// 	//create a queue at each coordinate(3 levels) and store queues together
-			// 	q = append(q, createQueue(coord, gridID))
-			// }
 
 		}
 	}
-	//err = insertManyDB(context.TODO(), client, q, "queues")
+
 	fmt.Print("done")
 
 	fmt.Fprint(w, "stored")
@@ -1807,74 +1650,13 @@ func storeTimestampedFlight(f Flight) {
 	var segmented []int
 	distanceTravelled := speed * lengthOfTimestamps
 	segmented = append(segmented, distanceTravelled)
-	// add distance traveeled
-	// for i := 0; i < 50; i++ {
 
-	// }
 }
 
 func parseEndTime(f Flight) {
 	fmt.Println("f", f.EndTime)
-	// if len(f.EndTime) == 5 {
-	// 	hour := f.EndTime[0:2]
-	// 	min := f.EndTime[3:5]
-	// 	hourInt, err := strconv.Atoi(hour)
-	// 	minInt, err := strconv.Atoi(min)
-
-	// 	hourFint, err := strconv.Atoi(f.Hour)
-	// 	minFint, err := strconv.Atoi(f.Minute)
-	// 	if err != nil {
-	// 		fmt.Println("Error during conversion")
-	// 		return
-	// 	}
-	// 	fmt.Printf("End Min + End Hour: %v %v", minInt, hourInt)
-	// 	fmt.Printf("\nStart Min + Start Hour: %v %v", minFint, hourFint)
-
-	// 	var totalHours = hourInt + hourFint //if over 24 --> next day
-	// 	var totalMinutes = minInt + minFint //if over 60
-
-	// 	if totalMinutes >= 60 {
-	// 		totalHours += 1
-	// 		m := totalMinutes % 60
-	// 		totalMinutes = m
-	// 	}
-
-	// 	if totalHours >= 24 {
-	// 		fmt.Printf("next day")
-	// 		//f.Date += 1
-
-	// 		d := f.Date[8:10]
-	// 		date, err := strconv.Atoi(d)
-	// 		if err != nil {
-	// 			fmt.Println("Error during conversion")
-	// 			return
-	// 		}
-	// 		date += 1
-	// 		dateString := strconv.Itoa(date) + "00"
-	// 		strings.ReplaceAll(f.Date, d, dateString)
-
-	// 		t := totalHours % 24
-	// 		totalHours = t
-	// 	}
-
-	//date := time.Date(2023, 6, 1, 0, 0, 0, 0, time.UTC)
-	//fmt.Println(date.Unix())
-
-	//fmt.Printf("%v, %v", minInt, hourInt)
-	//}
-
-	// if len(e) == 2 {
-	// 	min := e[0:2]
-	// 	fmt.Printf("%v", min)
-	// }
 
 }
-
-// func storeDrone() {
-
-// 	droneDoc := bson.D{{"name", flight.Drone.Name}, {"model", flight.Drone.Model}, {"weight", flight.Drone.Weight}}
-// 	err = insertDB(context.TODO(), client, droneDoc, "drones")
-// }
 
 func getAllTimes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
