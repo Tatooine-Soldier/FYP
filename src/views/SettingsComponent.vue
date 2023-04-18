@@ -47,49 +47,20 @@ export default {
             d.style.fontSize = this.size+"px"
             s.style.fontSize = this.size+"px"
             //lt.style.fontSize = this.size+"px"
-            var n = document.getElementsByClassName("nav-content-container")
-            var navbar = document.getElementsByClassName("navbar")
-            var navLinks = document.getElementById("link-text")
-            var t = document.getElementsByClassName("links")
-            var mapHeader = document.getElementById("distance-caption-container")
             if (this.theme === "dark") {
-                n = document.getElementsByClassName("nav-content-container")
-                navbar = document.getElementsByClassName("navbar")
+                var n = document.getElementsByClassName("nav-content-container")
+                var navbar = document.getElementsByClassName("navbar")
                 for (let i = 0; i < n.length; i++) {
                     n[i].style.backgroundColor = "#504F4F";
                     navbar[i].style.backgroundColor = "#504F4F";
-                    navbar[i].style.borderBottom = "solid 1px white";
                 }
-                
+                var navLinks = document.getElementById("link-text")
+                var t = document.getElementsByClassName("links")
                 for (let i = 0; i < n.length; i++) {
                     t[i].style.color = "#78FF24";
-                }
-                navLinks.style.color = "#78FF24"
-
-                mapHeader.style.backgroundColor = "#757373"
-                mapHeader.style.color = "#FFFFFF"
-                mapHeader.style.borderRight = "solid 1px white"
-                //mapHeader.style.borderTop = "solid 1px white"
-            }
-            else if (this.theme === "light") {
-                n = document.getElementsByClassName("nav-content-container")
-                navbar = document.getElementsByClassName("navbar")
-                for (let i = 0; i < n.length; i++) {
-                    n[i].style.backgroundColor = "#78FF24";
-                    navbar[i].style.backgroundColor = "#78FF24";
-                    navbar[i].style.borderBottom = "solid 2px #504F4F";
-                }
-                
-                for (let i = 0; i < n.length; i++) {
-                    t[i].style.color = "#504F4F";
                    
                 }
-                navLinks.style.color = "#504F4F"
-
-                mapHeader.style.backgroundColor = "#FFFFFF"
-                mapHeader.style.color = "#000000"
-                mapHeader.style.borderRight = "none"
-                //mapHeader.style.borderTop = "none"
+                navLinks.style.color = "#78FF24"
             }
         }
     }

@@ -125,7 +125,7 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
                     <MyGoogleMapComponent @someEvent="logme" :propspeed="time"></MyGoogleMapComponent>
                     <SpeedSelectorComponent @speedEvent="logspeed"></SpeedSelectorComponent>
                 </section>
-                <section class="side-container" id="side-container">
+                <section class="side-container">
                     <section class="four-rows">
                         <section class="fp-info-container">
                             <section class="fp-sub-info">
@@ -1117,23 +1117,7 @@ export default {
                            
                             a.innerHTML = d[4]
                         }
-                    } else if (d.length === 2) {
-                        if (d[0] === "none") {
-                            t.style.display = "none"
-                            alert("Change Take-Off time")
-                            this.$router.push('')
-                        } 
-                        else {
-                            b.style.display = "block"
-
-                            r.innerHTML = "00:00"
-
-                            f.innerHTML = d[0]
-
-                            a.innerHTML = d[1]
-                        }
-                    } 
-                    else {
+                    } else {
                         if (d[0] === "none") {
                             t = document.getElementById("final-map-container")
                             t.style.display = "none"

@@ -1,6 +1,6 @@
 <template>
   <div id="big-container">
-    <div class="distance-caption-container" id="distance-caption-container">
+    <div class="distance-caption-container">
       <div class="distance-details" >
           <div id="distanceKM" class="distanceUpdate">{{ distance }}km</div>
           <div class="sub-distance">Distance of path(km)</div>
@@ -190,8 +190,10 @@ import { Loader } from '@googlemaps/js-api-loader'
     import { useGeolocation } from '../useGeolocation'
     import { airports, getAirports } from '../airports'
     import { LinkedList } from '../linkedList'
+    import { checkD } from '@/withinAirspace';
     import { getLineSegments } from '../lineSegments'
     import { Grid } from '../gridCoords';
+    import {PQ, Node} from '../graph';
     
     // import haversineDistance from './calculateDistance'
     //const GOOGLE_MAPS_API_KEY = 'AIzaSyDTNOMjJP2zMMEHcGy2wMNae1JnHkGVvn0'

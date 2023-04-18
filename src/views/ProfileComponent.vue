@@ -33,22 +33,21 @@
                 <p>Profile Page</p>
                 <h2>Welcome <i>{{ user }}</i></h2>
             </header>
-            <input type="button" value="hide" id="collapseFlights" @click="collapseFlights()">
             <section class="profile-data-container">
-                <div class="past-flight-display" id="past-flight-display">
+                <div class="past-flight-display">
                     <p id="past-flights-heading">Your past flights: </p>
                     <!-- <p v-for="(flight, index) in flightData" v-bind:key="index">
                         {{ flight }}
                     </p> -->
 
-                    <div class="flight-details-headings" id="flight-details-headings">
+                    <div class="flight-details-headings">
                         <b>Flight ID</b>
                         <b>Date</b>
                         <b>Start Time</b>
                         <b>End Time</b>
                         <b>Altitude</b>
                     </div>
-                    <div class="displayFlightDetails" id="displayFlightDetails" v-for="(i, index) in flightData" v-bind:key="index" @click="showFlight(index)">
+                    <div class="displayFlightDetails" v-for="(i, index) in flightData" v-bind:key="index" @click="showFlight(index)">
                             <p class="flight-details-records">
                                 {{ flightIDs[index] }}
                             </p>
@@ -97,8 +96,7 @@ export default {
             flightSourceCoords: [],
             flightDestCoords: [],
             pastCoordinates: [],
-            cursor: 0,
-            counter: 0
+            cursor: 0
         }
     },
     async created() {
@@ -158,18 +156,6 @@ export default {
             loginIcon.style.display = "none"
             var np = document.getElementById("nav-planner")
               np.style.visibility = "hidden"
-        },
-        collapseFlights() {
-            var f = document.getElementById("past-flight-display")
-            var c = document.getElementById("collapseFlights")
-            if (this.counter % 2 === 0) {
-                c.value = "show"
-                f.style.display = "none"
-            } else {
-                c.value = "hide"
-                f.style.display = "block"
-            }
-            this.counter += 1
         }
     }
 }

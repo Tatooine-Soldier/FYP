@@ -91,9 +91,6 @@ export default {
           console.log("Signup outcome: ",data); //NEED TO REDIRECT
           if (data.result) {
              //this.$emit(entryEvent, this.data.result)
-              document.cookie = `session_id=${response.data.session_id}`;
-              var np = document.getElementById("nav-planner")
-              np.style.visibility = "visible"
               this.$router.push('planner')
           } else {
             this.message = "Incorrect Username or Password"
