@@ -115,6 +115,11 @@ type Coordinate struct {
 	//Corridor  string `json:"corridor"`
 }
 
+type StripCoordinate struct {
+	Latitude  string `json:"lat"`
+	Longitude string `json:"lng"`
+}
+
 type TimeRecord struct {
 	Id     string `json:"id"`
 	Hour   string `json:"hour"`
@@ -151,6 +156,13 @@ type Userobj struct {
 	Password string `json:"password"`
 }
 
+type GridData struct {
+	ID     string          `json:"id"`
+	Coord  StripCoordinate `json:"coordinate`
+	Layer  string          `json:"layer"`
+	gridID string          `json:"gridID"`
+}
+
 type UserSignobj struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
@@ -168,6 +180,9 @@ var GRID_INCREMENT int
 var LAYER_ONE = "60"
 var LAYER_TWO = "90"
 var LAYER_THREE = "120"
+var queueReleaseInterval = 120 //2 minutes
+var densityThreshold = .5
+var queueLimit = 10
 
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	_, err := fmt.Fprintf(w, "Welcome to the homepage")
@@ -670,10 +685,50 @@ func main() {
 	http.HandleFunc("/updateFlightTime", updateFlightTime)
 	http.HandleFunc("/userProfile", userProfileHandler)
 	http.HandleFunc("/user", userHandler)
+	http.HandleFunc("/getGrid", getGrid)
 
 	// dist := calculateDistance(3.44, 3.44)
 	listenerErr := http.ListenAndServe(":3333", nil)
 	fmt.Printf("%v", listenerErr)
+}
+
+func getGrid(w http.ResponseWriter, r *http.Request) {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	if err != nil {
+		panic(err)
+	}
+
+	ctx := context.TODO()
+	usersCollection := client.Database("fyp_test").Collection("grid")
+	filter := bson.D{{"layer", "60"}}
+
+	result, err := usersCollection.Find(ctx, filter)
+	var results []bson.M
+	if err = result.All(context.TODO(), &results); err != nil {
+		panic(err)
+	}
+
+	// var sendBack []interface{}
+	// for _, doc := range results {
+	// 	c := doc["coordinate"]
+
+	// 	sendBack = append(sendBack, c)
+	// }
+	// sendBackString := fmt.Sprintf("%v", sendBack)
+	var sendBack []string
+	for _, doc := range results {
+		jsonBytes, err := json.Marshal(doc)
+		if err != nil {
+			// Handle error
+		}
+		jsonString := string(jsonBytes)
+		sendBack = append(sendBack, jsonString)
+		sendBack = append(sendBack, ",")
+	}
+	sendBack[len(sendBack)-1] = ""
+	sendBackString := fmt.Sprintf("%v", sendBack)
+
+	fmt.Fprintf(w, sendBackString)
 }
 
 func handle(w http.ResponseWriter, r *http.Request, name string) {
@@ -981,8 +1036,7 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 			log.Printf("---> SCHEDULED flight at %v in sub grid %v ", intendedFlight.Times[len(intendedFlight.Times)-1], intendedFlight.SubGrid)
 			fmt.Printf("Scheduled flight at %v in sub grid %v ", intendedFlight.Times[0], intendedFlight.SubGrid)
 			fmt.Fprintf(w, "%v %v %v %v", intendedFlight.Times[0], intendedFlight.Times[len(intendedFlight.Times)-1], intendedFlight.SubGrid, intendedFlight.Speed)
-		} else { //if other grids are not empty, 2 choices: wait for 5 minutes in current grid or join the queue to enter another grid. Which is shorter?
-			addToQueue(intendedFlight.Id, intendedFlight.SubGrid)
+		} else { //if other grids are not empty, wait for 5 minutes in current grid or if none available join the queue to enter another grid.
 			// checkQueueWaitingTime(queue)
 			//add 5 minutes onto each of these times and then rerun the schedule function in  the currect sub grid
 			var fiveMinuteWaitSegments []string
@@ -1000,7 +1054,6 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 				timeStr = timeStr[10:16]
 				fiveMinuteWaitSegments = append(fiveMinuteWaitSegments, timeStr)
 			}
-			fmt.Printf("New 5 min timestamps: %v", fiveMinuteWaitSegments)
 			intendedFlight.Times = fiveMinuteWaitSegments
 			log.Printf("\n\n* No other subgrid altitude available, delayed flight start time by 5 minutes *\n")
 			unavailableTimes = schedule(intendedFlight, flightWatchList) //need to update time stored
@@ -1010,6 +1063,13 @@ func getFlightsWithinRadius(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("Scheduled flight after 5mins %v:", intendedFlight.Times)
 				fmt.Fprintf(w, "%v %v %v %v", intendedFlight.Times[0], intendedFlight.Times[len(intendedFlight.Times)-1], intendedFlight.SubGrid, intendedFlight.Speed)
 			} else {
+				//enqueue the flight at nearest border node if density of flights in the grid is high
+				if getGridDensity(intendedFlight) > densityThreshold {
+					success, f := addToQueue(intendedFlight)
+					if success {
+						schedule(f, flightWatchList)
+					}
+				}
 				fmt.Fprintf(w, "none")
 			}
 		}
@@ -1029,26 +1089,7 @@ func getShortestWaitGrid(gridLevel string) {
 }
 
 func createQueue(coordinate Coordinate, gridID string) []interface{} {
-	// client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
-	// if err != nil {
-	// 	panic(err)
-	// }
 
-	//queueDoc := bson.D{{"id", gridID}, {"coordinate", coordinate}, {"layer", LAYER_ONE}, {"flights", []string{}}}
-	//err = insertDB(context.TODO(), client, queueDoc, "queues")
-	// if err != nil {
-	// 	fmt.Printf("error storing creating the queue %f", LAYER_ONE)
-	// }
-	//queueDoc = bson.D{{"id", gridID}, {"coordinate", coordinate}, {"layer", LAYER_TWO}, {"flights", []string{}}}
-	//err = insertDB(context.TODO(), client, queueDoc, "queues")
-	// if err != nil {
-	// 	fmt.Printf("error storing creating the queue %f", LAYER_TWO)
-	// }
-	//queueDoc = bson.D{{"id", gridID}, {"coordinate", coordinate}, {"layer", LAYER_THREE}, {"flights", []string{}}}
-	//err = insertDB(context.TODO(), client, queueDoc, "queues")
-	// if err != nil {
-	// 	fmt.Printf("error storing creating the queue %f", LAYER_THREE)
-	// }
 	queues := []interface{}{
 		QueueStorage{id: gridID, coordinate: coordinate, layer: LAYER_ONE, flights: []string{}},
 		QueueStorage{id: gridID, coordinate: coordinate, layer: LAYER_TWO, flights: []string{}},
@@ -1058,14 +1099,101 @@ func createQueue(coordinate Coordinate, gridID string) []interface{} {
 
 }
 
-func addToQueue(flightID string, subGrid string) {
+func getGridDensity(flight FlightSegmented) float64 {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	if err != nil {
+		panic(err)
+	}
+	ctx := context.TODO()
+
+	sTime := flight.Times[0]
+	eTime := flight.Times[len(flight.Times)-1]
+	layout := "15:04"
+
+	// parse the time string using the layout, and assign it to a zero date
+	startTime, err := time.Parse("2006-01-02 "+layout, "0001-01-01 "+sTime)
+	endTime, err := time.Parse("2006-01-02 "+layout, "0001-01-01 "+eTime)
+
+	filter := bson.D{{"date", flight.Date}, {"times", bson.M{"$elemMatch": bson.M{"$gte": startTime.Format("15:04:05"), "$lte": endTime.Format("15:04:05")}}}}
+	gridCollection := client.Database("fyp_test").Collection("segmentedFlight")
+	results, err := gridCollection.Find(ctx, filter)
+	if err != nil {
+		panic(err)
+	}
+	defer results.Close(context.Background())
+
+	numberOfFlights := 0.0
+	for results.Next(context.Background()) {
+		numberOfFlights++
+	}
+
+	//###########################################
+	filter = bson.D{{}}
+	gridCollection = client.Database("fyp_test").Collection("grid")
+	results, err = gridCollection.Find(ctx, filter)
+	if err != nil {
+		panic(err)
+	}
+	defer results.Close(context.Background())
+
+	numberOfNodes := 0.0
+	for results.Next(context.Background()) {
+		numberOfNodes++
+	}
+	//get all the flight whcih are occuring at this time inthe the grid and divide it by the size of the grid
+	return numberOfNodes / numberOfFlights
+}
+
+func addToQueue(flight FlightSegmented) (bool, FlightSegmented) {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		panic(err)
 	}
 
-	gridDoc := bson.D{{"flightID", flightID}, {"subGrid", subGrid}}
-	err = insertDB(context.TODO(), client, gridDoc, "queue")
+	queueLocation := flight.EntryPoint
+	queueCollection := client.Database("fyp_test").Collection("queues")
+
+	queueSize := getQueueSize(client, queueCollection, queueLocation)
+	if queueSize < queueLimit {
+		//take the time the flight is being enqueued at and add the amount of time it will remain in the queue
+		timeEnqueued := time.Now()
+
+		minutesEnqueued := (queueReleaseInterval / 60) * queueSize //time spent waiting in the queue depending on the queue size
+		newTime := timeEnqueued.Add(time.Duration(minutesEnqueued))
+		timeEnqueuedString := newTime.Format("2006-01-02 15:04:05")
+
+		flight.Times = updateFlightTimes(flight, minutesEnqueued) //update the segmented times to include time spent waiting in the queue
+		queueItem := QueueItem{                                   //store the flight and the time it is being enqueued at
+			Flight:       flight,
+			TimeEnqueued: timeEnqueuedString,
+		}
+
+		ctx := context.TODO()
+		filter := bson.D{{"queueCoord", queueLocation}}
+		enqueue := bson.M{"$push": bson.D{{"queue", queueItem}}}
+
+		_, err = queueCollection.UpdateOne(ctx, filter, enqueue)
+		if err != nil {
+			panic(err)
+		}
+		return true, flight
+	}
+	return false, flight
+
+}
+
+func getQueueSize(client *mongo.Client, collection *mongo.Collection, queue Coordinate) int {
+	var size string
+
+	ctx := context.TODO()
+	filter := bson.D{{"queueCoord", queue}}
+	err := collection.FindOne(ctx, filter).Decode(&size)
+	if err != nil {
+		panic(err)
+	}
+
+	num, err := strconv.Atoi(size)
+	return num
 }
 
 func updateFlight(flight FlightSegmented) { //if an emtpy grid is found, update the original flight subgrid value
@@ -1085,6 +1213,26 @@ func updateFlight(flight FlightSegmented) { //if an emtpy grid is found, update 
 		log.Fatal(err)
 	}
 	fmt.Printf("Updated %v", result)
+}
+
+func updateFlightTimes(flight FlightSegmented, timeToAdd int) []string {
+	var updatedFlightTimes []string
+	duration := timeToAdd
+
+	// Loop through the list of times and update each one
+	for _, timeStr := range flight.Times {
+		t, err := time.Parse("15:04", timeStr)
+		if err != nil {
+			fmt.Printf("Error parsing time string: %v\n", err)
+			continue
+		}
+
+		// Add the desired duration to the time.Time object
+		newT := t.Add(time.Duration(duration) * time.Minute)
+		newTStr := newT.Format("15:04")
+		updatedFlightTimes = append(updatedFlightTimes, newTStr)
+	}
+	return updatedFlightTimes
 }
 
 func checkOtherSubGridAvailability(gridLevel string) ([]string, bool) {
@@ -1476,8 +1624,22 @@ func storeGridCoordinates(w http.ResponseWriter, r *http.Request) {
 			gridCoord := bson.D{{"lat", coord.Latitude}, {"lng", coord.Longitude}}
 			gridDoc := bson.D{{"id", coord.Id}, {"coordinate", gridCoord}, {"layer", layer}, {"gridID", gridID}}
 			err = insertDB(context.TODO(), client, gridDoc, "grid")
+			if err != nil {
+				panic(err)
+			}
+
+			//assign an empty queue to each border node
+			if containsBorderNode(coord, grid.BorderCoords) {
+				var queueOfFlights []FlightSegmented
+				queueDoc := bson.D{{"id", coord.Id}, {"queueCoord", coord}, {"layer", layer}, {"gridID", gridID}, {"queueReleaseInterval", queueReleaseInterval}, {"queue", queueOfFlights}}
+				err = insertDB(context.TODO(), client, queueDoc, "queues")
+				if err != nil {
+					panic(err)
+				}
+			}
 
 		}
+
 	}
 
 	fmt.Print("done")
