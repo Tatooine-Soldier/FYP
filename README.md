@@ -1,4 +1,5 @@
 # fyp3 - Final Year Project - Web based system for planning UAV flight paths  
+The Go server is located in *go/SERVER/httpserver/main.go*
 ## Contents  
   
 ### Frontend  
