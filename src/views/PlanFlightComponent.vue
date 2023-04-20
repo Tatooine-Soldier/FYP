@@ -39,7 +39,7 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
                 <!-- <SpeedSelectorComponent @speedEvent="logspeed"></SpeedSelectorComponent> -->
             </section>
             <section id="final-map-container">
-                <FinalGoogleMapComponent @loadedMap="logLoaded" :propcoords="coords" :propspeed="speed.velocity" :propdate="date" :propway="waypoints" :propSubgrid="subGrid" :propEndTime="endTime" :propDuration="duration" :propID="flightID" :key="componentKey"></FinalGoogleMapComponent>
+                <FinalGoogleMapComponent @loadedMap="logLoaded" :propcoords="coords" :propspeed="speed.velocity" :propdate="date" :propway="waypoints" :propSubgrid="subGrid" :propEndTime="endTime" :propDuration="duration" :propID="flightID" :propsDrone="droneSpec.name" :key="componentKey"></FinalGoogleMapComponent>
             </section>
             <section id="weather-display-planner">
                 <ForecastDisplayComponent :key="windKey"></ForecastDisplayComponent>
@@ -125,7 +125,7 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
                     <MyGoogleMapComponent @someEvent="logme" :propspeed="time"></MyGoogleMapComponent>
                     <SpeedSelectorComponent @speedEvent="logspeed"></SpeedSelectorComponent>
                 </section>
-                <section class="side-container">
+                <section class="side-container" id="side-container">
                     <section class="four-rows">
                         <section class="fp-info-container">
                             <section class="fp-sub-info">
@@ -195,22 +195,25 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
                                     
                                     <!-- <form action="/location" method="post"> -->
                                     <section class="coords">
+                                        <!-- <section>
+                                            Use path flight <input type="button" @click="fetchPastFlights()">
+                                        </section> -->
                                         <section class="coords-source">
                                             <div class="coords-labels"><b>Source:</b></div>
                                             <section class="coords-inputs">
                                                 <label for="latitude">Latitude: </label>
-                                                <input type="text" name="sourcelatitude" size="16" ref="mysourcelat"/>
+                                                <input type="text" name="sourcelatitude" size="16" ref="mysourcelat" disabled/>
                                                 <label for="longitude">Longitude: </label>
-                                                <input type="text" name="sourcelongitude" size="16" ref="mysourcelong"/>
+                                                <input type="text" name="sourcelongitude" size="16" ref="mysourcelong" disabled/>
                                             </section>
                                         </section>
                                         <section class="coords-destination">
                                             <div class="coords-labels"><b>Destination:</b></div>
                                             <section class="coords-inputs">
                                                 <label for="latitude">Latitude: </label>
-                                                <input type="text" name="destlatitude" size="16" ref="mydestlat"/>
+                                                <input type="text" name="destlatitude" size="16" ref="mydestlat" disabled/>
                                                 <label for="longitude">Longitude: </label>
-                                                <input type="text" name="destlongitude" size="16" ref="mydestlong">
+                                                <input type="text" name="destlongitude" size="16" ref="mydestlong" disabled>
                                             </section>
                                         </section>
                                         <section class="waypoints-container">
@@ -838,66 +841,29 @@ export default {
         this.coords.destlongitude = this.$refs.mydestlong.value;
         this.waypoints.lat =  this.$refs.mywaylat.value;      //SEND ACROSS TO FINAL MAP COMPONENT AND GENERATE FLIGHT PATH
         this.waypoints.lng =  this.$refs.mywaylng.value;
-        this.altitude =  this.$refs.myaltitude.value;
         this.orientation = this.$refs.myorientation.value;
-        console.log("this.$refs.myspeed.value--> ", this.$refs.myspeed.value)
-        this.speed.velocity = this.$refs.myspeed.value;
         this.droneSpec.name = this.$refs.mydronename.value;
-        // this.droneSpec.model = this.$refs.mydronemodel.value;
-        // this.droneSpec.weight = this.$refs.mydroneweight.value;
-        // this.date.day = this.$refs.date.value;
-        // this.date.hour = this.$refs.hour.value;
-        // this.date.minute = this.$refs.minute.value;
-        if (this.speed.velocity < 20) {
+        this.droneSpec.model = this.$refs.mydronemodel.value;
+        this.droneSpec.weight = this.$refs.mydroneweight.value;
+
+        if (!(isNaN(this.$refs.myaltitude.value))) {
+            this.altitude =  this.$refs.myaltitude.value;
+        }
+
+        if (!(isNaN(this.$refs.myspeed.value))) {
+            this.speed.velocity =  this.$refs.myspeed.value;
+        }
+
+        if (41 <= this.speed.velocity < 50) {
             this.speed.description = "low-speed";
             this.subGrid = LAYER_ONE
-        } else if (20 <= this.speed.velocity < 30 ) {
+        } else if (50 <= this.speed.velocity < 61 ) {
             this.speed.description = "mid-speed";
             this.subGrid = LAYER_TWO
-        } else if (30 <= this.speed.velocity < 50 ) {
+        } else if (61 <= this.speed.velocity < 70 ) {
             this.speed.description = "high-speed";
             this.subGrid = LAYER_THREE
-        } 
-        console.log("waypoints:", this.$refs.mywaylng.value, this.$refs.mywaylat.value)
-
-        // var myTime =  this.hour +"-"+this.minute
-        // var input_date = new Date(this.date)
-        // input_date.setMinutes(input_date.getMinutes())
-
-
-
-
-        // var details = document.getElementById('flight-details-container');
-        // details.style.display = 'block';
-
-        // var grey = document.getElementById('flight-planner-columns');
-        // grey.style.opacity = 0.2;
-        // grey.style.pointerEvents = "none";
-
-
-        // const flight = { 
-        //     srclat: this.coords.sourcelatitude, 
-        //     srclng: this.coords.sourcelongitude, 
-        //     destlat: this.coords.destlatitude, 
-        //     destlng: this.coords.destlongitude,
-        //     hour: this.date.hour,
-        //     minute: this.date.minute,
-        //     date: this.date.day,
-        //     speed: this.speed.description
-        // }
-
-        // //this needs to be in a seperate function. 
-        // //if user selects "confirm", call this function
-        // axios
-        // .post("/storeFlight", flight)
-        // .then((response) => {
-        //   const data = response.data;
-        //   console.log("STORED FLIGHT SUCCESSFUL: ",data);
-        // })
-        // .catch (function (error) {
-        //     console.log("ERROR:", error);    
-        // })
-
+        }
         
       },
       showFinalDetails() {
@@ -911,7 +877,7 @@ export default {
         console.log(event)
         var finaldetails = document.getElementById('final-map-container');
         finaldetails.style.display = 'None';
-        console.log(event)
+    
 
         var grey = document.getElementById('flight-planner-columns');
         grey.style.opacity = 1;
@@ -937,18 +903,16 @@ export default {
       },
       showFinalMap(storeDate) {
         var tl = this.date.day + " " + this.date.hour +":"+this.date.minute+":"+"00" 
-        console.log("full date--> ", tl)
         var duration = Math.round(this.duration*60)
-        console.log("DURATION", duration) //duration in minutes
         
         let input_date_str = tl;
         let input_date = new Date(input_date_str);  
-        console.log("input_date-->", input_date)
+
         input_date.setMinutes(input_date.getMinutes() + duration)
 
         let options = {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false};
         let result_date_str = input_date.toLocaleString("en-US", options);
-        console.log("ENDTIME RESULT: ", result_date_str);
+     
         this.endTime = result_date_str
         
         let max = 100000
@@ -962,7 +926,7 @@ export default {
             weight: this.droneSpec.weight
         }
         var flight = {};
-        if (storeDate) {   //put grid layer in here 
+        if (storeDate) {  
             flight = { 
                 id: randomInteger,
                 srclat: this.coords.sourcelatitude, 
@@ -1004,13 +968,10 @@ export default {
         }
         console.log("FLIGHT---> ", flight)
         this.renderLoading()
-        //this needs to be in a seperate function. 
-        //if user selects "confirm", call this function
+        
         axios
         .post("/storeFlight", flight)
-        .then((response) => {
-          const data = response.data;
-          console.log("STORED FLIGHT SUCCESSFUL: ",data);
+        .then(() => {
           var c = document.getElementById("splitContainer")
             c.style.display = "none"
             var m = document.getElementById("flight-details-container")
@@ -1021,23 +982,13 @@ export default {
             var x = document.getElementById("ex-sign")
             x.style.display = "none";
             f.style.display = "block"
-            //this.forceRenderer();
+        
             console.log("done rendered map again")
             this.updateDate(storeDate);
         })
         .catch (function (error) {
-            console.log("ERROR:", error);    
+            console.warn("ERROR:", error);    
         })
-
-
-        // * COMMENTED OUT DO THAT THE FINAL MAP DOESNT APPEAR EXACTLY AFTER PRESSING SUBMIT, SHOW CALENDAR FIRST **
-
-        // var map = document.getElementById("final-map-container")
-        // map.style.display = "block"
-        // var con = document.getElementById("ex-sign")
-        // con.style.display = "block"
-        // var details = document.getElementById('flight-details');
-        // details.style.display = 'None';
        
       },
       updateDate(checkRadius) {
@@ -1117,7 +1068,23 @@ export default {
                            
                             a.innerHTML = d[4]
                         }
-                    } else {
+                    } else if (d.length === 2) {
+                        if (d[0] === "none") {
+                            t.style.display = "none"
+                            alert("Change Take-Off time")
+                            this.$router.push('')
+                        } 
+                        else {
+                            b.style.display = "block"
+
+                            r.innerHTML = "00:00"
+
+                            f.innerHTML = d[0]
+
+                            a.innerHTML = d[1]
+                        }
+                    } 
+                    else {
                         if (d[0] === "none") {
                             t = document.getElementById("final-map-container")
                             t.style.display = "none"
@@ -1272,7 +1239,6 @@ export default {
             endHourStr = "0"+endHourStr
         } 
         return endHourStr
-        //maybe get the hours between
     
       },
       lowInfo() {
@@ -1318,9 +1284,7 @@ export default {
             if (t.length === 21) {
                 endF = t.slice(9, 11) 
             } 
-            // else if (t.length === 20) {
-            //     endF = "00"
-            // }
+        
             else {
                 endF =  t.slice(10, 12)
             }
@@ -1333,10 +1297,6 @@ export default {
         map.style.display = "none"
         var con = document.getElementById("ex-sign")
         con.style.display = "none"
-
-        // var lng = c.lng.toString()
-        // var lat = c.lat.toString()
-
 
       },
       logLoaded() {
@@ -1380,7 +1340,7 @@ export default {
 
         
 
-        //console.log("hour + minute", hour, minute)
+       
       },
 
       disappearWindEx() {
