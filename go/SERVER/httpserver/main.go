@@ -1621,14 +1621,12 @@ func getAllTimes(w http.ResponseWriter, r *http.Request) {
 	for _, v := range times {
 		valStr := fmt.Sprint(v)
 		timesStr = append(timesStr, valStr)
-		// fmt.Fprintf(w, valStr+",")
 	}
 
 	var timeStr []string
 	for _, x := range time {
 		valStr := fmt.Sprint(x)
 		timeStr = append(timeStr, valStr)
-		// fmt.Fprintf(w, valStr+",")
 	}
 
 	var pairs []string
@@ -1639,6 +1637,5 @@ func getAllTimes(w http.ResponseWriter, r *http.Request) {
 		pairs = append(pairs, timeval)
 		fmt.Fprintf(w, timeval+",")
 	}
-	// fmt.Fprintf(w, "Hola")
 
 }
