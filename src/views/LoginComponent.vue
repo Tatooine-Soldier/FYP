@@ -66,7 +66,6 @@
 
 <script>
 import axios from 'axios';
-//import { useRoute } from 'vue-router';
 
 export default {
     data() {
@@ -81,33 +80,33 @@ export default {
   
     methods: {
       handleSubmit() {
-        // Send data to the server or update your stores and such.
-        // location.href = 'http://localhost:3333/#/loginrequest'
-        axios
-        .post("/login", this.user)
-        .then((response) => {
-          const data = response.data;
-          this.$globalUser = data.id
-          console.log("this.$globalUser", this.$globalUser)
-          console.log("Login outcome: ",data); //NEED TO REDIRECT
-          if (data.result) {
-            //   this.$emit('entryEvent', {n: this.data.name} )
-              document.cookie = `session_id=${response.data.session_id}`;
-              var np = document.getElementById("nav-planner")
-              np.style.visibility = "visible"
-              var loginIcon = document.getElementById("login-icon")
-              loginIcon.style.display = "inline"
-              this.$router.push('planner')
-          } else {
-            this.message = "Incorrect Username or Password"
-          }
-        //   useRoute.push('/planner'); 
-        })
-        .catch (function (error) {
-            console.log("ERROR:", error);    
-        })
-        //console.log("href-->", location.href)
-        // location.href = "https://localhost:3333/planner"
+        // Parse data and send data to the server.
+        if (this.user.name !== "" || this.user.password !== "") {
+            //sanitize
+            this.user.name = this.user.name.replace(/([<>/&])/g, '');
+            this.user.password = this.user.password.replace(/([<>/&])/g, '');
+
+            axios
+            .post("/login", this.user)
+            .then((response) => {
+            const data = response.data;
+            if (data.result) {
+            
+                document.cookie = `session_id=${response.data.session_id}`;
+                var np = document.getElementById("nav-planner")
+                np.style.visibility = "visible"
+                var loginIcon = document.getElementById("login-icon")
+                loginIcon.style.display = "inline"
+                this.$router.push('planner')
+            } else {
+                this.message = "Incorrect Username or Password"
+            }
+         
+            })
+            .catch (function (error) {
+                console.log("ERROR:", error);    
+            })
+        }
       }
     }
 }

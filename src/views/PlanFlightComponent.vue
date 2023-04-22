@@ -1,17 +1,14 @@
 <script setup>
-  import FinalGoogleMapComponent from "@/components/FinalGoogleMapComponent.vue"
-import MyGoogleMapComponent from "../components/MyGoogleMapComponent.vue"
-//import MyCalendarComponent from "../components/MyCalendarComponent.vue";
-import SpeedSelectorComponent from "@/components/SpeedSelectorComponent.vue";
-import LoaderComponent from "@/components/LoaderComponent.vue";
-import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue";
-//import FinalGoogleMapComponentVue from "@/components/FinalGoogleMapComponent.vue";
-//   const props = defineProps(['title'])
+    import FinalGoogleMapComponent from "@/components/FinalGoogleMapComponent.vue"
+    import MyGoogleMapComponent from "../components/MyGoogleMapComponent.vue"
+    import SpeedSelectorComponent from "@/components/SpeedSelectorComponent.vue";
+    import LoaderComponent from "@/components/LoaderComponent.vue";
+    import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue";
+
 </script>
 
 <template>
     <section class="flight-planner" id="flight-planner">
-            <!-- <form action="/planner" method="post"> -->
         <form @submit.prevent="handleSubmit()">
             <section id="loadingScreen"><LoaderComponent :propmsg="loaderMsg" :key="loaderRefresh"></LoaderComponent></section>
             <section class="flight-details-container" id="flight-details-container">
@@ -35,8 +32,7 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
             <img src="../assets/ex-sign.png" id="ex-sign-wind" v-on:click="disappearWindEx()"/>
 
             <section id="details-map-container">
-                <!-- <MyGoogleMapComponent @someEvent="logme" :propspeed="time"></MyGoogleMapComponent> -->
-                <!-- <SpeedSelectorComponent @speedEvent="logspeed"></SpeedSelectorComponent> -->
+
             </section>
             <section id="final-map-container">
                 <FinalGoogleMapComponent @loadedMap="logLoaded" :propcoords="coords" :propspeed="speed.velocity" :propdate="date" :propway="waypoints" :propSubgrid="subGrid" :propEndTime="endTime" :propDuration="duration" :propID="flightID" :propsDrone="droneSpec.name" :key="componentKey"></FinalGoogleMapComponent>
@@ -89,19 +85,10 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
                         <label for="day">Select day: </label>
                         <input type="date" name="date" id="day" v-model="date.day" />
                     </div>
-
-                    
                 </section>
-                <!-- <section>
-                    <div class="check-time-db" @click="getDates()">Check availablility</div>
-                 
-                    <MyCalendarComponent @selectedTimeEvent="logTime" :propdates="bookedDates" :propID="flightID"></MyCalendarComponent>
-                </section> -->
+        
                 <section>
-                   
-                    
                      <div id="submit-div-planflight" @click="showFinalMap(true)">Confirm Time</div>
-                     <!-- <input type="button" value="Confirm" @click="showFinalMap(true)"/> -->
                 </section>
             </section>
             
@@ -111,6 +98,7 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
                     <input type="text" name="sourcelatitude" size="16"/>
                 </section>
             </section>
+
             <section class="date-flights-container">
                 <li v-for="item in bookedDates" :key="item">
                     {{ item }}
@@ -118,7 +106,6 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
             </section>
             <div><img src="../assets/ex-sign.png" id="ex-sign" v-on:click="disappearEx()"/></div>
 
-            <!-- row content  -->
             <span><b @click="hidePanel()" id="lt">&gt;</b></span>
             <section class="split-container" id="splitContainer">
                 <section class="map-container">
@@ -176,28 +163,18 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
                                                 <label for="day">Select day: </label>
                                                 <input type="date" name="date" v-model="date.day"/>
                                             </div>
-                                            
-                                            
                                         </section>
                                         <div id="weather-div-planner">
                                             <input type="button" name="windData" id="fetchWindButton" value="Wind Forecast" @click="fetchWind()"/>
                                         </div>
-                                    
-                                    
                                 </section>
                             </section>
                         </section>
                         <section class="fp-info-container">
-                        
                             <section class="fp-sub-info">
                                 <p class="fp-subtitle">Select your source and destination:</p>
                                 <section class="coords-container">
-                                    
-                                    <!-- <form action="/location" method="post"> -->
                                     <section class="coords">
-                                        <!-- <section>
-                                            Use path flight <input type="button" @click="fetchPastFlights()">
-                                        </section> -->
                                         <section class="coords-source">
                                             <div class="coords-labels"><b>Source:</b></div>
                                             <section class="coords-inputs">
@@ -234,7 +211,6 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
                             
                             <section class="fp-sub-info">
                                 <p class="fp-subtitle">View your desired UAV speed:</p>
-                                    <!-- <form action="/speed" method="post"> -->
                                     <section class="speed-container">
                                        
                                         <label for="speed">Speed(km/h): </label>
@@ -289,19 +265,14 @@ import ForecastDisplayComponent from "@/components/ForecastDisplayComponent.vue"
                                                         <label for="drone-weight">UAV weight: </label>
                                                         <input type="text" name="drone-weight" size="16" ref="mydroneweight">
                                                     </div>
-                                                    
                                                 </section>
                                             </section>
                                         </section>
                                     </section>
-                                    <!-- <input id="submit" name="submit" type="submit" value="Add"/> -->
-                                    <!-- </form> -->
                             </section>
                         </section>
                         <section class="fp-info-container">
                                     <div class="check-time-db" @click="showFinalDetails()">Submit</div>
-                                    <!-- <input id="submit" name="submit" type="submit" value="Add"/> -->
-                            
                         </section>
                       
                     </section>
@@ -762,15 +733,12 @@ grid-template-rows: 30% 30% 20% 20%;
 
 </style>
 
-<!-- <script defer src="<https://maps.googleapis.com/maps/api/js?key=AIzaSyDTNOMjJP2zMMEHcGy2wMNae1JnHkGVvn0&callback=initMap>"> -->
 <script>
- // import * as geolib from 'geolib';
+
 import axios from 'axios';
-//import { getWindSpeed } from "@/fetchWindSpeed";
 import { convertDegreesToDirection } from "@/degreesToCompassDirections";
 import { windSpeedToColour } from "@/displayWindWarningColours"
-//import router from "@/router";
-//import { response } from "express"; NOT SURE IF I NEED THIS
+
 const LAYER_ONE = "60"
 const LAYER_TWO = "90"
 const LAYER_THREE = "120"
@@ -790,7 +758,7 @@ export default {
             destlatitude: ''
         },
         speed: {
-            description: '',  //corridor
+            description: '',  
             velocity: ''
         },
         info: null,
@@ -833,19 +801,21 @@ export default {
         console.log("Props--->", props.propsettings)
     },
     methods: {
+      // Send data to the server to be processed
       handleSubmit() {
-        // Send data to the server or update your stores and such.
+        // retrieve form data 
         this.coords.sourcelatitude = this.$refs.mysourcelat.value;
         this.coords.sourcelongitude = this.$refs.mysourcelong.value;
         this.coords.destlatitude = this.$refs.mydestlat.value;
         this.coords.destlongitude = this.$refs.mydestlong.value;
-        this.waypoints.lat =  this.$refs.mywaylat.value;      //SEND ACROSS TO FINAL MAP COMPONENT AND GENERATE FLIGHT PATH
+        this.waypoints.lat =  this.$refs.mywaylat.value;     
         this.waypoints.lng =  this.$refs.mywaylng.value;
         this.orientation = this.$refs.myorientation.value;
         this.droneSpec.name = this.$refs.mydronename.value;
         this.droneSpec.model = this.$refs.mydronemodel.value;
         this.droneSpec.weight = this.$refs.mydroneweight.value;
 
+        // erorr checks
         if (!(isNaN(this.$refs.myaltitude.value))) {
             this.altitude =  this.$refs.myaltitude.value;
         }
@@ -854,6 +824,7 @@ export default {
             this.speed.velocity =  this.$refs.myspeed.value;
         }
 
+        // assume all flights fall into a speed between 41 to 70 km/h
         if (41 <= this.speed.velocity < 50) {
             this.speed.description = "low-speed";
             this.subGrid = LAYER_ONE
@@ -864,35 +835,30 @@ export default {
             this.speed.description = "high-speed";
             this.subGrid = LAYER_THREE
         }
-        
       },
+
+      // displays the confirm details div
       showFinalDetails() {
         this.handleSubmit()
         var details = document.getElementById('flight-details-container');
         details.style.display = 'block';
       },
+
+      // hides the final map 
       disappear: function (event) {
         var details = document.getElementById('flight-details-container');
         details.style.display = 'None';
-        console.log(event)
         var finaldetails = document.getElementById('final-map-container');
         finaldetails.style.display = 'None';
     
-
         var grey = document.getElementById('flight-planner-columns');
         grey.style.opacity = 1;
         grey.style.pointerEvents = "initial";
+
+        console.log(event)
       },
-      handleSubmitCoords() {
-        console.log(this.coords)
-      }, 
-      showMap(event) {
-            var map = document.getElementById("details-map-container")
-            map.style.display = "block"
-            var con = document.getElementById("ex-sign")
-            con.style.display = "block"
-            console.log(event);
-      }, 
+      
+      // hide the map when button is clicked
       disappearEx() {
         var map = document.getElementById("details-map-container")
         map.style.display = "none"
@@ -901,6 +867,8 @@ export default {
         var ex = document.getElementById("ex-sign")
         ex.style.display = "none"
       },
+
+      // displays the final map whih contains the flight path after the user confirms flight details entered
       showFinalMap(storeDate) {
         var tl = this.date.day + " " + this.date.hour +":"+this.date.minute+":"+"00" 
         var duration = Math.round(this.duration*60)
@@ -963,27 +931,28 @@ export default {
                 orientation: this.orientation,
                 drone: drone
             }
-            console.log("MSG-->", this.loaderMsg)
 
         }
-        console.log("FLIGHT---> ", flight)
+        // refresh loader component
         this.renderLoading()
         
+        // store flight details in database
         axios
         .post("/storeFlight", flight)
         .then(() => {
-          var c = document.getElementById("splitContainer")
+            // display loading screen while path is being geenrated
+            var c = document.getElementById("splitContainer")
             c.style.display = "none"
             var m = document.getElementById("flight-details-container")
             m.style.display = "none"
             var footer = document.getElementById("footerApp")
             footer.style.display = "none"
-            var f = document.getElementById("loadingScreen")
+            var loadingScreen = document.getElementById("loadingScreen")
             var x = document.getElementById("ex-sign")
             x.style.display = "none";
-            f.style.display = "block"
-        
-            console.log("done rendered map again")
+            loadingScreen.style.display = "block"
+      
+            // update the date of the flight and begin generating the flight path
             this.updateDate(storeDate);
         })
         .catch (function (error) {
@@ -1010,12 +979,13 @@ export default {
         l.style.display = "block"
        
 
+        // call the /updateFlightTime endpoint and then begin generating flight path
         axios
         .post("/updateFlightTime", flightData)
         .then((response) => {
           const data = response.data;
           console.log("UPDATED FLIGHT TIME: ",data);
-          this.forceRenderer(); //can this be called before axios??
+          this.forceRenderer(); //refresh the final map component
         }).then(() => {
             console.log("checking radius after time select ", checkRadius)
             if (checkRadius) { //only schedule the flight once the time has been selected
@@ -1027,26 +997,29 @@ export default {
         })
 
       }, 
+
+      // call to begin generating and scheduling the flight after user details have been entered
       checkRadius() {
         setTimeout(() => {
-        // code to be executed after 3 seconds
-            var fullDate = this.date.day //might be wrong format eg / instead of -
+            var fullDate = this.date.day 
             console.log("sending fulldate: ", fullDate) 
             const queryDate = {
                 date: fullDate,
-                id: this.flightID,//handle this in backend
+                id: this.flightID,
                 reset: true
             };
             axios 
                 .post("/getFlightsWithinRadius", queryDate)
                 .then((response) => {
+                    //hide other components
                     var cal = document.getElementById("calendar-display-afterwards")
                     cal.style.display = "none"
                     
-                    var data =  response.data
-                    console.log("response from radius function--> ", data)
+                    // parse the response
+                    var data =  response.data //response
                     var d = data.split(" ")
-                    console.log("d-->", d)
+               
+                    //insert response data into corrsponding UI fields
                     var b = document.getElementById("flightlogbutton")
                     var r =  document.getElementById("take-off-time")
                     var f = document.getElementById("eta-final")
@@ -1107,32 +1080,35 @@ export default {
                 })
         }, 13000);
       },
+
+      // fetches the wind data for the source and destination points selected by the user
       async fetchWind() {
+        // get user starting point
         var lat = parseFloat(this.$refs.mysourcelat.value);
         var lng = parseFloat(this.$refs.mysourcelong.value);
 
         if (lat === "" || lng === "") {
-            console.log("Please select a location")
+            return "no location selected"
         }
 
         lat = lat.toFixed(2)
         lng = lng.toFixed(2)
 
+        // get starting time user has selected 
         var hour = document.getElementById("hour").value
         var minute = document.getElementById("minute").value
         var date = document.getElementById("day").value
         
         this.windDataHour = hour
-        console.log(hour, minute, date)
-
-        console.log("lng, lat", lng, lat)
+      
+        // call the api
         var res = await fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lng+"&hourly=windspeed_80m,winddirection_80m&start_date="+date+"&end_date="+date)
         var final = await res.json()
-        console.log("final", final)
 
         var x = document.getElementById("ex-sign-wind")
         x.style.display = "block"
 
+        // refresh the wind display component
         this.windData = final
         this.windKey += 1
 
@@ -1166,25 +1142,25 @@ export default {
 
 
         //DEST////////////////////////////////////////////////////////
-
+        // get destination point
         lat = parseFloat(this.$refs.mydestlat.value);
         lng = parseFloat(this.$refs.mydestlong.value);
 
         if (lat === "" || lng === "") {
-            console.log("Please select a location")
+            return "no location selected"
         }
 
         lat = lat.toFixed(2)
         lng = lng.toFixed(2)
 
+        // get time selected
         hour = document.getElementById("hour").value
         minute = document.getElementById("minute").value
         date = document.getElementById("day").value
         
         this.windDataHour = hour
-        console.log(hour, minute, date)
-
-        console.log("lng, lat", lng, lat)
+       
+        // call api
         res = await fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lng+"&hourly=windspeed_80m,winddirection_80m&start_date="+date+"&end_date="+date)
         final = await res.json()
         console.log("final", final)
@@ -1192,12 +1168,14 @@ export default {
         x = document.getElementById("ex-sign-wind")
         x.style.display = "block"
 
+        // refreah the wind display component
         this.windData = final
         this.windKey += 1
 
         dt =document.getElementById("date-wind")
         w =document.getElementById("warning-wind-source")
 
+        // display the waind warniong in UI
         endHour = this.calculateETA(hour)
         doc = document.getElementById("weather-display-planner")
         doc.style.display = "block"
@@ -1227,11 +1205,14 @@ export default {
         
         
       },
+
+      // returns the sum of the start time and the flight duration
       calculateETA(hour) {
         var durationHour = document.getElementById("distanceTime").innerHTML
         durationHour = durationHour.slice(0,2)
         hour = parseInt(hour)
         durationHour = parseInt(durationHour)
+
         var endHour = hour+durationHour
         console.log("Added ", durationHour, " and ", hour, "=", endHour)
         var endHourStr = endHour.toString() 
@@ -1241,27 +1222,9 @@ export default {
         return endHourStr
     
       },
-      lowInfo() {
-        var c = document.getElementById('lowc');
-        c.style.display = 'block';
-      },
-      midInfo() {
-        var c = document.getElementById('midc');
-        c.style.display = 'block';
-      },
-      highInfo() {
-        var c = document.getElementById('highc');
-        c.style.display = 'block';
-      },
-      hideInfo() {
-        const infos = document.getElementsByClassName('info-container');
-        var i = 0;
-        while (i < 3) {
-            infos[i].style.display = 'none';
-            i ++;
-        }
-      }, 
-      async logme({c, d, distance, w, t, r}) { // data received from map component 
+      
+      // process data emitted by the map component 
+      async logme({c, d, distance, w, t, r}) { 
         console.log("RECEIVED IN PARENT",c.lat, c.lng, d.lat, d.lng, t);
         this.$refs.mysourcelat.value = c.lat.toString();
         this.$refs.mysourcelong.value = c.lng.toString();
@@ -1299,50 +1262,27 @@ export default {
         con.style.display = "none"
 
       },
+      // refresh final map
       logLoaded() {
         this.loadedFMap = true
-        console.log("LOADED FMAP IN PLANNER")
       },
+      
+      // display the default grid selected by emitted speed selecte=or component
       logspeed(c) {
         this.time = c
         var s = document.getElementById("speed")
         s.value = c
         var alt = document.getElementById("altitude")
-        if (c < 20) {
+        if (41 <= c < 50) {
             alt.value = LAYER_ONE
-        } else if (c < 30 && c >= 20){
+        } else if (50 <= c < 61 ) {
             alt.value = LAYER_TWO
-        } else {
+        } else if (61 <= c < 70 ) {
             alt.value = LAYER_THREE
         }
       },
-      logTime(t) {
-        console.log("Received fulltime: ", t, "len(fulltime)", t.length)
-        if (t.length > 15) {
-            var arr =  t.split(",")
-            this.date.day = arr[0]
-            var time =  arr[1]
-            var hour =  time.slice(0,2)
-            this.date.hour = hour
-            var minute = time.slice(3,5)
-            this.date.minute = minute
-        } else {
-            arr =  t.split(",")
-            this.date.day = arr[0]
-            this.date.day =  this.date.day.slice(0,8) + "0" + this.date.day.slice(8,9)
-            time =  arr[1]
-            hour =  time.slice(0,2)
-            this.date.hour = hour
-            minute = time.slice(3,5)
-            this.date.minute = minute
-        }
-        console.log("this.date", this.date)
 
-        
-
-       
-      },
-
+      // hide wind display 
       disappearWindEx() {
         var d = document.getElementById("ex-sign-wind")
         d.style.display = "none"
@@ -1350,16 +1290,23 @@ export default {
         wl.style.display = "none"
       }, 
 
+      // display waypoint selector
       setWaypoint() {
         var w = document.getElementById("waypoint-container")
         w.style.display = "block";
       },
+
+      // refreah the final map component
       forceRenderer() {
         this.componentKey += 1
       },
+
+      // refresh the loader component
       renderLoading() {
         this.loaderRefresh += 1
       },
+
+      // hide the side panel when the < symbol is clicked
       hidePanel() {
         var d = document.getElementById("splitContainer");
         var l = document.getElementById("lt");
@@ -1372,12 +1319,13 @@ export default {
         }
         this.displayCounter += 1
       },
+
+      // fetch all flight dates from the database
       getDates() {
         axios
         .post("/getAllTimes")
         .then((response) => {
           const data = response.data;
-          console.log("33-->",data,"<--33");
           const myArray = data.split(",");
           this.bookedDates = myArray;
         })
@@ -1385,6 +1333,8 @@ export default {
             console.log("ERROR:", error);    
         })
       },
+
+      // compose a list of UAVs fron the passed in array and filter out nulls
       getDrones(arr) {
         for (var flight in arr) {
             if (arr[flight].drone !== "") {
@@ -1394,22 +1344,19 @@ export default {
             }
             
         }
-        console.log("DRONESLIST-->", this.dronesList)
       }
-
     }, 
+    // call when this component loads
     mounted() {
+        // fetch the data for the logged in user fro the database
         axios
         .post("/userProfile")
         .then((response) =>{
             const data = response.data;
-            console.log("data: ", data)
             var dataArray = data.split("|")
-            console.log("dataArray--> ", dataArray)
-
+          
             var flights = dataArray[1]
             const jsonArray = JSON.parse(flights);
-            console.log("jsonArray-->", jsonArray)
             this.getDrones(jsonArray);
         })
     }

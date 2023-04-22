@@ -1,6 +1,3 @@
-<script setup>
-</script>
-
 <template>
     <section class="weather-container">
         <div class="weather-header"><h1>5 day forecast: </h1></div>
@@ -138,7 +135,7 @@ h1 {
 import { useGeolocation } from '../useGeolocation'
 import { computed } from 'vue'
 import { convertDegreesToDirection } from '@/degreesToCompassDirections';
-//import { getWindSpeed } from '@/fetchWindSpeed';
+
 export default {
     data() {
       return {
@@ -153,25 +150,26 @@ export default {
       }
     },
     name: "WeatherComponent",
+    // call when the component loads
     mounted() {
         this.getWind()
     },
     methods: {
+          // fetch the five day hourly wind forecast data for the current device location
         async getWind() {
             if (this.counter === 0) { //prevent multiple calls
-                console.log("calling")
                 const { coords } = useGeolocation()
                 const initial = computed(() => ({
                 lat: coords.value.latitude.toString(),
                 lng: coords.value.longitude.toString()
                 }))
-                var lat = "51.892609777851305"
-                var lng = "-8.50142240524292"
-                console.log("LAT--->", initial.value.lat)
-                //var res = await fetch("https://api.open-meteo.com/v1/forecast?latitude="+initial.value.lat+"&longitude="+initial.value.lng+"&hourly=windspeed_80m")
+              
+                var lat = initial.value.lat
+                var lng = initial.value.lng
+              
                 var res = await fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lng+"&hourly=windspeed_80m,winddirection_80m")
                 var final = await res.json()
-                console.log("final", final)
+
                 this.windData = final
                 this.windValues = this.windData.hourly.windspeed_80m
                 var tempDates = this.windData.hourly.time
@@ -197,6 +195,7 @@ export default {
             }
 
         },
+        // update the colorList with colors depending in the windspeed value for each hour
         getColors() {
             for (var val in this.windValues) {
                 var intWindVal = parseInt(this.windValues[val])
@@ -219,6 +218,7 @@ export default {
             }
             console.log("colours", this.colorList)
         },
+        // return the list of nautical wind directions for each hour
         convertDegreesToDirection(degreeList) {
             return convertDegreesToDirection(degreeList)
         }

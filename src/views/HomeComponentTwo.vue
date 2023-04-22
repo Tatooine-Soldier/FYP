@@ -4,32 +4,12 @@
             <div class="text-over-drone">
                 <h1 translate="no"><b class="highlight-letter">U</b>AV <b class="highlight-letter">F</b>LIGHT <b class="highlight-letter">P</b>LANNER</h1>
                 <section class="planner-button-container">
-                    <!-- <router-link to="/planner"><button class="but">Plan Your Flight Now</button></router-link> -->
+                    
                     <router-link to="/login"><button class="but">Login</button></router-link>
                     <router-link to="/signup"><button class="but">Signup</button></router-link>
                 </section>
             </div>
         </section>
-        <!-- <section class="homepageTwo">
-            <section class="homepageTwo-sub">
-                <b> <b class="highlight-letter">R</b>oute </b><br>
-                <p>Seeking to plan the best route for your next flight? This system uses a series of nodes to calulate the fastest flight path from a given source to the target destination</p>
-            </section>
-            <section class="homepageTwo-sub">
-                <b> <b class="highlight-letter">T</b>ime </b><br>
-                <p>Choose your own in-flight speed and recieve accurate arrival time estimates to your chosen destination</p> 
-            </section>
-        </section>
-        <section class="homepageTwo">
-            <section class="homepageTwo-sub">
-                <b> <b class="highlight-letter">D</b>istance </b><br>
-                <p>Seeking to plan the best route for your next flight? This system uses a series of nodes to calulate the fastest flight path from a given source to the target destination</p>
-            </section>
-            <section class="homepageTwo-sub">
-                <b> <b class="highlight-letter">O</b>ptimised</b><br>
-                <p>Choose your own in-flight speed and recieve accurate arrival time estimates to your chosen destination</p> 
-            </section>
-        </section> -->
     </section>
 </template>
 

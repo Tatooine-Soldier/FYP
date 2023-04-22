@@ -82,24 +82,31 @@ export default {
   
     methods: {
       handleSubmit() {
-        // Send data to the server or update your stores and such.
-        console.log(this.user.name)
-        axios
-        .post("/signup", this.user)
-        .then((response) => {
-          const data = response.data;
-          console.log("Signup outcome: ",data); //NEED TO REDIRECT
-          if (data.result) {
-             //this.$emit(entryEvent, this.data.result)
-              this.$router.push('planner')
-          } else {
-            this.message = "Incorrect Username or Password"
-          }
-        //   useRoute.push('/planner'); 
-        })
-        .catch (function (error) {
-            console.log("ERROR:", error);    
-        })
+        // Parse data and send data to the server.
+        if (this.user.name !== "" || this.user.email !== "" || this.user.password !== "") {
+            //sanitize 
+            this.user.name = this.user.name.replace(/([<>/&])/g, '');
+            this.user.email = this.user.email.replace(/([<>/&])/g, '');
+            this.user.password = this.user.password.replace(/([<>/&])/g, '');
+
+            axios
+            .post("/signup", this.user)
+            .then((response) => {
+            const data = response.data;
+            
+            if (data.result) {
+                document.cookie = `session_id=${response.data.session_id}`;
+                var np = document.getElementById("nav-planner")
+                np.style.visibility = "visible"
+                this.$router.push('planner')
+            } else {
+                this.message = "Incorrect Username or Password"
+            }
+            })
+            .catch (function (error) {
+                console.warn("ERROR:", error);    
+            })
+        }
       }
     }
 }

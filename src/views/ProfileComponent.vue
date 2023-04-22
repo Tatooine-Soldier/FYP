@@ -33,21 +33,18 @@
                 <p>Profile Page</p>
                 <h2>Welcome <i>{{ user }}</i></h2>
             </header>
+            <input type="button" value="hide" id="collapseFlights" @click="collapseFlights()">
             <section class="profile-data-container">
-                <div class="past-flight-display">
+                <div class="past-flight-display" id="past-flight-display">
                     <p id="past-flights-heading">Your past flights: </p>
-                    <!-- <p v-for="(flight, index) in flightData" v-bind:key="index">
-                        {{ flight }}
-                    </p> -->
-
-                    <div class="flight-details-headings">
+                    <div class="flight-details-headings" id="flight-details-headings">
                         <b>Flight ID</b>
                         <b>Date</b>
                         <b>Start Time</b>
                         <b>End Time</b>
                         <b>Altitude</b>
                     </div>
-                    <div class="displayFlightDetails" v-for="(i, index) in flightData" v-bind:key="index" @click="showFlight(index)">
+                    <div class="displayFlightDetails" id="displayFlightDetails" v-for="(i, index) in flightData" v-bind:key="index" @click="showFlight(index)">
                             <p class="flight-details-records">
                                 {{ flightIDs[index] }}
                             </p>
@@ -96,33 +93,32 @@ export default {
             flightSourceCoords: [],
             flightDestCoords: [],
             pastCoordinates: [],
-            cursor: 0
+            cursor: 0,
+            counter: 0
         }
     },
+    // call when this component has been creatred in DOM
     async created() {
         axios
         .post("/userProfile")
         .then((response) => {
           const data = response.data;
-          console.log("data: ", data)
           var dataArray = data.split("|")
-          console.log("dataArray--> ", dataArray)
+
           this.user = dataArray[0]
 
           var flights = dataArray[1]
           const jsonArray = JSON.parse(flights);
-          console.log("jsonArray-->", jsonArray)
+       
           this.flightData = jsonArray
           this.arrangeDetails()
         })
         .catch(function (error) {
-            console.log("ERROR:", error); 
+            console.warn("ERROR:", error); 
         })
     },
     methods: {
-        getIDs() {
-
-        },
+        // add each flight data field to a corresponding array 
         arrangeDetails() {
             for (var flight in this.flightData) {
                 this.flightIDs.push(this.flightData[flight].id)
@@ -131,13 +127,14 @@ export default {
                 this.flightEndTimes.push(this.flightData[flight].endTime)
                 this.flightAltitudes.push(this.flightData[flight].altitude)
                 if (this.flightData[flight].drone !== "") {
-                    console.log("this.flightData[flight].drone-->", this.flightData[flight].drone)
                     this.flightDrones.push(this.flightData[flight].drone)
                 }
                 this.flightSourceCoords.push(this.flightData[flight].startCoord)
                 this.flightDestCoords.push(this.flightData[flight].destCoord)
             }
         },
+
+        // display expanded flight details in UI
         showFlight(i) {
             this.cursor = i
             var e = document.getElementById("expanded-flight")
@@ -145,17 +142,34 @@ export default {
             var x = document.getElementById("profile-ex")
             x.style.display = 'block'
         },
+
+        // hide expanded flight in UI
         hideFlight() {
             var e = document.getElementById("expanded-flight")
             e.style.display = 'none'
             var x = document.getElementById("profile-ex")
             x.style.display = 'none'
         },
+
+        // hide these UI components after logout
         logout() {
             var loginIcon = document.getElementById("login-icon")
             loginIcon.style.display = "none"
             var np = document.getElementById("nav-planner")
               np.style.visibility = "hidden"
+        },
+        // hide or show all user past flights in UI
+        collapseFlights() {
+            var f = document.getElementById("past-flight-display")
+            var c = document.getElementById("collapseFlights")
+            if (this.counter % 2 === 0) {
+                c.value = "show"
+                f.style.display = "none"
+            } else {
+                c.value = "hide"
+                f.style.display = "block"
+            }
+            this.counter += 1
         }
     }
 }
