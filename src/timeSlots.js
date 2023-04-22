@@ -1,3 +1,4 @@
+// [*NOT IMPLEMENTED *]
 export function getTimeSlots() {
     const times = [] //final array of JSON timeslot objects that will be returned
     var timesList = [] //temp array of string times

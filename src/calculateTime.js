@@ -1,3 +1,4 @@
+// return time to be displayed in UI 
 const t = (distance, speed) => {
     const tme = distance/speed
     const remainder = tme%1

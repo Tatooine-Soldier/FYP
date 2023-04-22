@@ -1,7 +1,7 @@
-const prohibitedColor = "#FF0000"
-const restrictedColor = "#FF8833"
+const prohibitedColor = "#FF0000" // RED ZONE
+const restrictedColor = "#FF8833" // AMBER ZONE
 
-//largest airspaces are oredered first so that they are drawn first. smaller airspace on top of them can then be clickable
+//largest airspaces are oredered first so that they are drawn first. smaller airspace on top of them can then be clickable.
 export const airports = {
   u62: {
     center: {lat: 52.180878, lng: -9.523784},
@@ -440,6 +440,7 @@ export const airports = {
     
   }
 
+  // return all the airspaces in an array
   export function getAirports() {
     var arr =  [];
     for (var airport in airports) {
@@ -448,7 +449,8 @@ export const airports = {
     return arr;
   }
 
-  export function getRedAirports() { //retrun the prohibited zones of airport 
+  //return the prohibited zones of airport 
+  export function getRedAirports() { 
     var arr = [];
     for (var red in airports) {
       if (airports[red].color === prohibitedColor) {
@@ -458,7 +460,3 @@ export const airports = {
     return arr
 
   }
-
-  console.log(airports)
-  // exports.airports =  airports
-  // exports.getAirports =  getAirports()

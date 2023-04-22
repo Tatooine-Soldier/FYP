@@ -1,3 +1,5 @@
+
+// return a list of colours (status) based on the inputted wind speeds
 export function windSpeedToColour(listOfWindSpeeds) {
     var colorList = []
     for (var val in listOfWindSpeeds) {

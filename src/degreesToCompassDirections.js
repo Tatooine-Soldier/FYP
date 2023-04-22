@@ -1,3 +1,4 @@
+// return list of Nautical directions converted from the inputted degree values
 export function convertDegreesToDirection(degreeList) {
     var listOfDirections = []
     for (var i in degreeList) {
@@ -24,19 +25,15 @@ export function convertDegreesToDirection(degreeList) {
             else {
                 if (90 < degree && degree <= 112.5) {
                     listOfDirections.push("East-SouthEast")
-                    console.log("degreeList[i] ESE", degreeList[i])
                 }
                 if (112.5 < degree && degree <= 135) {
-                    listOfDirections.push("SouthEast")
-                    console.log("degreeList[i] S", degreeList[i])
+                    listOfDirections.push("SouthEast")  
                 }
                 if (135 < degree && degree <= 157.5) {
                     listOfDirections.push("South-SouthEast")
-                    console.log("degreeList[i] SS", degreeList[i])
                 }
                 if (157.5 < degree && degree <= 180) {
                     listOfDirections.push("South")
-                    console.log("degreeList[i] S", degreeList[i])
                 }
             }
         } 
@@ -74,7 +71,7 @@ export function convertDegreesToDirection(degreeList) {
             }
         }
     }
-    console.log(listOfDirections.length)
+  
     return listOfDirections
     
 }

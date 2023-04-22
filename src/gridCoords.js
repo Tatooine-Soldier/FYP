@@ -32,11 +32,11 @@ export class Grid {
     //generate the coordinates then store them in a database collection "grids"
     // .05 change in coordinate value is roughly a 6km change in distance
     //centerList param is the coordinate which will be the centerpoint of the grid
-    // formula for number of nodes in the grid is ((n*2)+1)^2 where n is the size passed into the grid
+
     generateCoords(centerList, full, anchors={} ) {  
         var center;
         var j;
-        for (var i = 0; i < this.size; i++) { //creates a "crucifix" pattern, n e s w
+        for (var i = 0; i < this.size; i++) { //creates nodes directly n e s w of central node
 
             for (center in centerList) {
                 for (j in centerList[center]) {
@@ -59,7 +59,7 @@ export class Grid {
                     var slng = centerList[center][j].lng 
                     var snext = {lat: slat, lng: slng}
                     if (checkRedAreas(snext)) {
-                        this.elist.push(snext)
+                        this.slist.push(snext)
                     }
                     
 
@@ -67,7 +67,7 @@ export class Grid {
                     var wlng = centerList[center][j].lng - this.gap
                     var wnext = {lat: wlat, lng: wlng}
                     if (checkRedAreas(wnext)) {
-                        this.elist.push(wnext)
+                        this.wlist.push(wnext)
                     }
                  
                 }
@@ -87,13 +87,14 @@ export class Grid {
         
 
         for (i = 0; i < this.size; i++) { // now get the coordinates of each column
-            for (var point in this.nlist) { //north rows for west columns and east columns
+            //north rows for west columns and east columns
+            for (var point in this.nlist) { 
                 
                 wlat = this.nlist[point].lat
                 wlng = this.nlist[point].lng - this.gap
                 wnext = {lat: wlat, lng: wlng}
                 if (checkRedAreas(wnext)) {
-                    this.elist.push(wnext)
+                    this.wlist.push(wnext)
                 }
 
                 elat = this.nlist[point].lat
@@ -104,13 +105,14 @@ export class Grid {
                 }
             }
 
-            for (point in this.slist) { //north rows for west columns and east columns
+            //south rows for west columns and east columns
+            for (point in this.slist) { 
             
                 wlat = this.slist[point].lat
                 wlng = this.slist[point].lng - this.gap
                 wnext = {lat: wlat, lng: wlng}
                 if (checkRedAreas(wnext)) {
-                    this.elist.push(wnext)
+                    this.wlist.push(wnext)
                 }
 
                 elat = this.slist[point].lat
@@ -132,8 +134,9 @@ export class Grid {
         }
         var c = 1
         var coordsList = []
-        console.log("centerList", centerList)
-        coordsList.push( //add the center point of the grid
+
+        //add the center point of the grid
+        coordsList.push( 
             {
                 lat: String(centerList[0][0].lat),
                 lng: String(centerList[0][0].lng),
@@ -152,41 +155,18 @@ export class Grid {
             }
         }
 
-        console.log("borderNodes--->", this.borderNodes)
         var layers = [LAYER_ONE, LAYER_TWO, LAYER_THREE] //sub grids
         var coordMsg = {coordinates: coordsList, layers: layers, borderCoordinates: this.borderNodes} //SEND BORDER NODES OVER HERE *******
-        this.nearest =  this.getNearestCoord(coordsList, anchors) // return this with this.returned???
-       // console.log("this.nearest", this.nearest)
-        
-        // DO NOT DELETE THIS //
-        var al;
+        this.nearest =  this.getNearestCoord(coordsList, anchors) 
+
         axios
         .post("/storeGridCoordinates", coordMsg)
         .then((response) => {
           const data = response.data;
-          console.log("STORED GRID SUCCESSFUL: ",data);
-          //al = this.getC()
-          console.log("full--->", full)
+          console.log("Grid stored successfully", data)
           if (full === true ) {
-            
             this.getC(this.nearest);
           }
-        //   return new Promise((resolve, reject) => {
-        //     setTimeout(() => {
-        //         resolve(this.returned)
-        //         console.log("Returned to map", this.returned)
-        //     }, 5100);
-        //   })
-
-        //   while(typeof al === "undefined") {
-        //     al = graph.getAdjacencyList();
-        //     if (typeof al !== "undefined") {
-        //         console.log("returning al --->" ,al)
-        //         this.al = al
-        //         return [finalList, al]
-        //     }    
-          
-        //   }
         })
         .catch (function (error) {
             console.log("ERROR:", error);    
@@ -196,15 +176,16 @@ export class Grid {
             setTimeout(() => {
                 resolve([this.returned, this.nearest])
                 console.log("Returned to map", this.returned, this.nearest)
-            }, 14000); //might need to make this bigger
+            }, 14000); 
           })
-        //add a function that drops the grid collection first  so then this can be left commented in
  
     }
 
+    // get nearest coordinates to the atrart and end point
+    // return these points as the entry and exit poitns to the grid 
     getNearestCoord(clist, anchors) {
+
         if (Object.keys(anchors).length !== 0) {
-            console.log("anchors", anchors)
             var startCoord = {lat: anchors.startLat, lng: anchors.startLng} 
             var endCoord = {lat: anchors.endLat, lng: anchors.endLng} 
             var smallestStart = Infinity
@@ -212,7 +193,6 @@ export class Grid {
             var smallestS = ""
             var smallestE = ""
             for (var i=0; i<clist.length; i++) {
-                console.log("anchors", anchors)
                 if (this.getCoordDistance(startCoord, clist[i]) < smallestStart) {
                     smallestStart = this.getCoordDistance(startCoord, clist[i])
                     smallestS = clist[i]
@@ -222,7 +202,7 @@ export class Grid {
                     smallestE = clist[i]
                 }
             }
-            console.log("Closest grid coord to start is: ", smallestS, "\nClosest grid coord to start is: ", smallestE)
+           
             return {start: smallestS, end: smallestE}
         }
         else {
@@ -231,8 +211,8 @@ export class Grid {
         
     }
 
+    // return absolute difference between coords
     getCoordDistance(c1, c2) {
-        //console.log("c1", c1, c2)
         var c1Lat = parseFloat(c1.lat)
         var c1Lng = parseFloat(c1.lng)
         var c2Lat = parseFloat(c2.lat)
@@ -241,17 +221,14 @@ export class Grid {
         if (c1Lat !== c2Lat && c1Lng !== c2Lng) {
             var lat = Math.abs(c1Lat - c2Lat)
             var lng = Math.abs(c1Lng - c2Lng)
-           // console.log("lat+lng", lat+lng)
-           
         }
         return lat + lng
     }
 
 
+    // call grid coordinates 
     getC(nearest) {
         var graph = new Graph();
-        // var al = graph.getCoordinates()
-        // console.log("al", al)
         graph.getCoordinates(nearest).then(data => {
             this.returned = data
             console.log("Received In grid coords--->", data); 
@@ -259,11 +236,11 @@ export class Grid {
           .catch(error => {
             console.error(error);
           });
-        // console.log("al after return? --->", al)
-        // return al
+
         
     }
 
+    // return this.al
     getAl() {
         return this.al
     }

@@ -1,6 +1,7 @@
 //taken from https://github.com/codingwithjustin
 /* eslint-disable no-unused-vars*/
 
+// return the haversine distance from one coordinate to the other coordinate
 export function haversineDistance(pos1, pos2) {
     console.log("CALCULATING")
     const R = 3958.8 // Radius of the Earth in miles
