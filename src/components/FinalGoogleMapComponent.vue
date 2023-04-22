@@ -7,13 +7,11 @@ import axios from 'axios'
     import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
     import { Graph, Node } from '../graph'
     import { Grid } from '../gridCoords'
-    //import { useGeolocation } from '../useGeolocation'
-    // import haversineDistance from './calculateDistance'
-    //const GOOGLE_MAPS_API_KEY = 'AIzaSyDTNOMjJP2zMMEHcGy2wMNae1JnHkGVvn0' //real key
+   
     const GOOGLE_MAPS_API_KEY = 'AIzaSyBkU3LEkHvrO8_kpSWGqobpFob-sESKlA8'
     export default {
       name: 'App',
-      props: ['propcoords', 'propspeed', 'propdate', 'propway', 'propEndTime', 'propSubgrid', 'propDuration', 'propID'],
+      props: ['propcoords', 'propspeed', 'propdate', 'propway', 'propEndTime', 'propSubgrid', 'propDuration', 'propID', 'propDrone'],
       data() {
         return {
           counter: 0
@@ -21,6 +19,7 @@ import axios from 'axios'
         
       },
       methods: {
+        // change flight log display
         showLog() {
           var t = document.getElementById("timestamps")
           var f = document.getElementById("flightlogbutton")
@@ -51,7 +50,6 @@ import axios from 'axios'
         let destMarker = ref(null)
         let map = ref(null)
 
-        //let waypointMarker =  ref(null)
         var graph; 
         var destNode;
         var sourceNode;
@@ -60,15 +58,17 @@ import axios from 'axios'
 
         var anchors = {startLat: parseFloat(props.propcoords.sourcelatitude) , startLng: parseFloat(props.propcoords.sourcelongitude), endLat: parseFloat(props.propcoords.destlatitude), endLng: parseFloat(props.propcoords.destlongitude)}
 
+        // called when final map component is loaded
         onMounted(async () => {
           await loader.load() 
           console.log("PROPS props.propcoords--->", props.propcoords)
 
+          // create objects
           graph =  new Graph()
           destNode =  new Node()
           sourceNode = new Node()
           
-
+          // assign source and destination coordinate values selected by the user 
           currPos.value = {lat: parseFloat(props.propcoords.sourcelatitude) ,lng: parseFloat(props.propcoords.sourcelongitude)} 
           otherLoc.value = {lat: parseFloat(props.propcoords.destlatitude), lng: parseFloat(props.propcoords.destlongitude)}
           
@@ -77,28 +77,29 @@ import axios from 'axios'
           graph.add(sourceNode)
           graph.add(destNode)
 
-          console.log("Propway", props.propway)
 
           waypointLoc.value =  {lat: parseFloat(props.propway.lat), lng: parseFloat(props.propway.lng)}
 
 
+          // create map component
           map.value = new google.maps.Map(mapDivHere.value, {
                 center: currPos.value,
                 mapId: 'b6fdfcadbdc5d7a0', 
                 zoom: 9 
             })
+           // create source marker positioned at the user selected coorcinate
           sourceMarker.value = new google.maps.Marker({
             position: currPos.value,
             map: map.value
           })
+
+           // create destination marker positioned at the user selected coorcinate
           destMarker.value = new google.maps.Marker({
             position: otherLoc.value,
             map: map.value
           })
-          // waypointMarker.value = new google.maps.Marker({
-          //   position: waypointLoc.value,
-          //   map: map.value
-          // })
+     
+          // create info window to identify the source marker in UI
           const sourceinfowindow = new google.maps.InfoWindow({
             content: "Starting Point",
             ariaLabel: "Source",
@@ -110,6 +111,7 @@ import axios from 'axios'
                 });
             });
 
+          // create info window to identify the destination marker in UI
           const destinfowindow = new google.maps.InfoWindow({
             content: "Destination Point",
             ariaLabel: "Destination",
@@ -124,16 +126,9 @@ import axios from 'axios'
         onUnmounted(async () => {
             if (clickListener) clickListener.remove()
         })
-        //let line = null
-        // watch([map, currPos, otherLoc], () => {
-        //   if (line) line.setMap(null)
-        //   if (map.value && otherLoc.value != null)
-        //     line = new google.maps.Polyline({
-        //       path: [currPos.value, otherLoc.value],
-        //       map: map.value
-        //     })
-        // })
-        let sourceToWay =  null; //line
+        
+        // draw Polyline between source and waypoint
+        let sourceToWay =  null; 
         watch([map, currPos, waypointLoc], () => {
           if (sourceToWay) sourceToWay.setMap(null)
           if (map.value && waypointLoc.value != null)
@@ -143,6 +138,7 @@ import axios from 'axios'
             })
         })
 
+        // draw Polyline between destination and waypoint
         let wayToDest = null; //line
         watch([map, waypointLoc, otherLoc], () => {
           if (wayToDest) wayToDest.setMap(null)
@@ -154,9 +150,9 @@ import axios from 'axios'
         })
 
         
-
+        // get distance between two coorcinates
         const haversineDistance = (pos1, pos2) => {
-          console.log("POS-->", pos1, pos2)
+
         const R = 3958.8 // Radius of the Earth in miles
         const rlat1 = pos1.lat * (Math.PI / 180) // Convert degrees to radians
         const rlat2 = pos2.lat * (Math.PI / 180) // Convert degrees to radians
@@ -176,6 +172,8 @@ import axios from 'axios'
           )*1.609344  //convert to kilometres
           return d.toFixed(2)
         }
+
+        // return time to be displayed in UI
         const t = (duration) => {
           duration = duration.toFixed(2)
           var hours = duration / 1
@@ -190,34 +188,28 @@ import axios from 'axios'
             t(props.propDuration)
         )
         const distance = 0;
-        // const distance = computed(() =>
-        // otherLoc.value === null && currPos.value === false
-        //   ? 0
-        //   : haversineDistance(currPos.value, otherLoc.value)
-        // )
+ 
 
-        var calendarContainer = document.getElementById("calendar-display-afterwards")
-        var footer = document.getElementById("footerApp")
-        var loadingScreen = document.getElementById("loadingScreen")
+        var loadingScreen = document.getElementById("loadingScreen") // displayed before the final flight path has been loaded 
 
         var segments = [] //used to capture segments(grid points) in the flight path
         var cpos = {lat: anchors.startLat, lng: anchors.startLng}
         var opos = {lat: anchors.endLat, lng: anchors.endLng}
+       
         var grid  = new Grid(4); //pass currPos and otherLoc down to grid, get nearest nodes in graph for both and then use those nodes in Dijkstra
         var psos = grid.generateCoords([[{lat: 51.8964507, lng: -8.4908813}]], true, anchors).then((data) => { 
-        console.log("Received In FINAL map coords--->", data); 
-        var totalDist = 0
-        console.log("data[0].path ", data[0].path)
-        setTimeout(function() {
-          console.log("W", data[0].path);
-        }, 5000);
-        var l;
-        l = data[0].path
-        console.log("l: ", l[0])
-        console.log("propcoords===>", props.propcoords) //need to add start and end points to segments
+          // returns the path generated within the grid 
+          setTimeout(function() {
+            console.log("W", data[0].path);
+          }, 5000);
+          var l;
+          l = data[0].path // coordinates of the flight path in the grid 
+   
+        // add destination coordinate and the grid exit point coordinate to the segments array of coordinates
         segments.push({lat: props.propcoords.destlatitude, lng: props.propcoords.destlongitude})
         segments.push({lat: l[0].value.coordinate.lat, lng: l[0].value.coordinate.lng})
-        console.log("path--> ", l, typeof l)
+  
+        // loop through the path, create coordinate objects for each coordinate and add to the segments array
         for (var i = 1; i < l.length; i++) {
           var latN = parseFloat(l[i].value.coordinate.lat)
           var lngN = parseFloat(l[i].value.coordinate.lng)
@@ -226,8 +218,8 @@ import axios from 'axios'
           var north = {lat: latN, lng: lngN}
           var south = {lat: latS, lng: lngS}
           segments.push({lat: l[i].value.coordinate.lat, lng: l[i].value.coordinate.lng})
-          console.log("Pairs as floats : ",latN, lngN, latS, lngS )
-          console.log("source lats: ", currPos.value.lat) //want to find the nearest node in th graph and connect it to the starting point 
+      
+          // draw Polyline between adjacent coordinates in the flight path
           var line = null;
           if (line) line.setMap(null)
           if (north && south != null)
@@ -236,15 +228,12 @@ import axios from 'axios'
               map: map.value,
               strokeColor: "#FF0000"
             })
-        // const d = computed(() => haversineDistance(north, south)) //want to add up distances between each point in the grid path
-        // totalDist += parseFloat(totalDist) + parseFloat(d.value)
-        // console.log("totalDist-->", totalDist)
         }
+        // finally add the starting coordinate to the array
         segments.push({lat: props.propcoords.sourcelatitude, lng: props.propcoords.sourcelongitude})
         totalDist = 6.46*(l.length-1)
-        console.log("total distance-->", totalDist)
-        // var domDist = document.getElementById("dist")
-        // domDist.innerHTML = totalDist.toString()
+   
+        // draw circles representing the entry and exit points of the grid used by the path
         const gridEntryCircle = new google.maps.Circle({
                   strokeColor: "#FF1122",
                   strokeOpacity: 0.8,
@@ -265,11 +254,11 @@ import axios from 'axios'
                   center: {lat: parseFloat(l[l.length-1].value.coordinate.lat), lng: parseFloat(l[l.length-1].value.coordinate.lng)},
                   radius: 500
                 });
-              
+            
           var entry =  {lat: parseFloat(data[1].start.lat), lng: parseFloat(data[1].start.lng)}
           var exit = {lat: parseFloat(data[1].end.lat), lng: parseFloat(data[1].end.lng)}
-          console.log("start and entry", entry, exit)
 
+          // draw Polyline between grid entry point and starting point 
           line = null;
           if (line) line.setMap(null)
           if (data[1].start != null)
@@ -279,6 +268,7 @@ import axios from 'axios'
               strokeColor: "#1133FF"
             })
 
+          // draw Polyline between grid exitr point and destination point 
           line = null;
           if (line) line.setMap(null)
           if (data[1].start != null)
@@ -288,17 +278,15 @@ import axios from 'axios'
               strokeColor: "#1133FF"
             })
           
-          
-          var startTime = props.propdate.hour + props.propdate.minute
-          var endTime = props.propEndTime
           var speed =  props.propspeed
           var duration = props.propDuration
         
 
-          var segmentedTime =  duration.toFixed(2) / l.length
-          console.log("SEGMENTED TIME & DURATION", segmentedTime, duration.toFixed(2))
+          // segment the total time into segments, a timestamp for each coordinate
+          var segmentedTime =  duration.toFixed(2) / l.length //time to add
           var segmentedTimeList = []
-          console.log(" props.propdate.hour.  props.propdate.minute ",  props.propdate.hour,   props.propdate.minute)
+      
+          // add starting time
           segmentedTimeList.push({hour: props.propdate.hour, minute: props.propdate.minute})
           const dateObj = new Date();
           dateObj.setHours(props.propdate.hour)
@@ -306,18 +294,15 @@ import axios from 'axios'
           var j = 1
           while(j < l.length+1) {
             var tl = (segmentedTime*60) 
-            //convert t to an actual time(add it to start time )
-            //t = t * 60
-         
+            // format the times into minutes and add the segmented time
             if (tl < 60) {
-              console.log("adding ", tl, " minutes")
               dateObj.setMinutes(dateObj.getMinutes() + tl);
             } else {
               dateObj.setHours(dateObj.getHours() + 1);
               var r = tl % 60
               dateObj.setMinutes(dateObj.getMinutes() + r);
             }
-            console.log("dateObj", dateObj, "\nt", tl) 
+        
             if (dateObj.getHours().toString().length < 2) {
               segmentedTimeList.push({hour: "0"+dateObj.getHours().toString(), minute: dateObj.getMinutes().toString()})
             } else {
@@ -327,31 +312,29 @@ import axios from 'axios'
           }
           var e = props.propEndTime.toString()
           segmentedTimeList.push({hour:  e.slice(12, 14), minute:e.slice(15, 17)})
-          console.log("segmentedTimeList", segmentedTimeList)
           segmentedTimeList = segmentedTimeList.reverse()
           
 
 
-          //code to adjust the timing segments to include No Man's Land
-          console.log("** HAVERSINE between first two segments --> **", haversineDistance(segments[segments.length-1], segments[segments.length-2]), segments[segments.length-1], segments[segments.length-2])
+          //code to adjust the timing segments to include No Man's Land(between starting point and grid entry point)
           var cdistance =  haversineDistance(segments[segments.length-1], segments[segments.length-2])
           var ctime =  (cdistance*1000) / ((speed*1000)/3600)
-          console.log("ctime raw: ", ctime, cdistance*1000)
+      
           function convertToMinutes(time) {
             var t = Math.ceil(time)
             var minutes =  t/60
             return minutes
           } 
+
           ctime = convertToMinutes(ctime)
           ctime = Math.ceil(ctime)
-          console.log("ctime---> ", ctime) //minutes to be added on to each segmented time 
+      
+          // returns the time added onto the inputted time in hh:mm format
           function addMinutes(time, minutesToAdd) { //
-            console.log("Adding ",minutesToAdd, " to ",  time )
             var hours = parseInt(time.hour);
             var minutes = parseInt(time.minute);
 
             var newMinutes = minutes + minutesToAdd;
-            console.log(minutes, minutesToAdd)
             var newHours = hours
             if (newMinutes >= 60) {
               newMinutes = newMinutes % 60;
@@ -362,8 +345,8 @@ import axios from 'axios'
             return formattedTime
           }
        
-          var newTime = addMinutes( segmentedTimeList[segmentedTimeList.length-1],ctime)
-          console.log(newTime) //newTime is the time at the first grid coord(start location time + distance to closest grid coord)
+          //newTime is the time at the first grid coord(start location time + distance to closest grid coord)
+          var newTime = addMinutes( segmentedTimeList[segmentedTimeList.length-1],ctime) 
 
           const dateOb = new Date();
           dateOb.setHours(newTime.hour)
@@ -371,9 +354,9 @@ import axios from 'axios'
           
           segmentedTimeList[1] = newTime
           segmentedTimeList[0] = segmentedTimeList[segmentedTimeList.length-1]
-          console.log("SEGMENTEDTIMELIST before reverse: ", segmentedTimeList)
+      
+          // update the times for each of the other coordinates based on the timestamp at which the flight enters the grid
           for (j=2;j<segmentedTimeList.length; j++) {
-            console.log("List item time-->", segmentedTimeList[j], "time chunk ", segmentedTime*60)
             tl = (segmentedTime*60) 
             if (tl < 60) {
               dateOb.setMinutes(dateOb.getMinutes() + tl);
@@ -393,16 +376,11 @@ import axios from 'axios'
           updateFlightTimes(segmentedTimeList[segmentedTimeList.length-1], segmentedTimeList[0], speed)
           displayTimestamps(segmentedTimeList, segments, timestamps)
 
-          console.log("SEGMENTEDTIMELIST after reverse: ", segmentedTimeList)
-          //**** RETURN HERE THE SEGMENTS//
-
-
           //Timestamp Display the circle objects with info objects for each node timestamp
-          console.log("segments", segments, "\nlen(segments): ", l.length, "\nduration: ", props.propDuration)
-
           for (var s in segments) {
             var lngSeg = parseFloat(segments[s].lng)
             var latSeg = parseFloat(segments[s].lat)
+            // draw a circle at each segmented coordinate in the flight path
             const segCircle = new google.maps.Circle({
                   strokeColor: "#FF1122",
                   strokeOpacity: 0.8,
@@ -415,6 +393,7 @@ import axios from 'axios'
               })
             var timeD = segmentedTimeList[s].hour.toString() + ":" + segmentedTimeList[s].minute.toString()
             
+            // info window displays the timestamp at which the UAV will be located at this coordinate 
             const infowindow = new google.maps.InfoWindow({
               content: timeD,
               ariaLabel: "Time_At_Coordinate",
@@ -472,6 +451,7 @@ import axios from 'axios'
             speed: props.propspeed,
             entryPoint: entryPoint, //entry point to the grid 
             exitPoint: exitPoint, //exit point from the grid
+            uavName: props.propDrone,
             id: props.propID
           }
           //STORE SEGMENTS LIST AS A SINGLE RECORD IN SEGMENTS COLLECTION WITH THE ID OF THE FLIGHT
@@ -479,8 +459,6 @@ import axios from 'axios'
           .post("/storeSegmentedFlight", segementedFlight)
           .then((response) => {
             console.log("* stored Segmented flights!!! *")
-            //calendarContainer.style.display = "block"; //UNCOMMENT THIS
-          //  footer.style.display = "inline-block";
           loadingScreen.style.display = "none"
             var fmap = document.getElementById("final-map-container")
             fmap.style.display = "block"
@@ -493,10 +471,6 @@ import axios from 'axios'
           console.error(error);
         }); 
 
-        
-
-        // NEED TO SEGMENT THE FLIGHT BY GETTING THE COORDINATES AT CERTAIN POINTS AND TIME IN THE FLIGHT(PERHAPS JUST GET THE COORDINATES OF EACH GRUD POINT IN THE PATH)
-        //THEN CHECK IF THE INTENDED FLIGHT FALLS WITHIN RADIUS OF THESE POINTS AT A THAT INTENDED TIME
       }).catch((error) => {
         console.log("Error with l", error)
       }) 
@@ -507,6 +481,8 @@ import axios from 'axios'
         return { currPos, otherLoc, distance, mapDivHere, calculatedTime, timestamps}
       }
     }
+
+    // display the timestamps as a list in the UI
     function displayTimestamps(segmentedTimeList, segments, timestamps) {
       console.log("segments==>", segments)
       var timestampDisplay =  document.getElementById("timestamps")
@@ -522,6 +498,7 @@ import axios from 'axios'
       timestampDisplay.innerHTML += "</ul>"
     }
 
+    // Update the eta and take-off times in the UI
     function updateFlightTimes(start, eta, speed) {
       var r =  document.getElementById("take-off-time")
       r.innerHTML = start.hour + ":" + start.minute
@@ -530,8 +507,6 @@ import axios from 'axios'
       var s = document.getElementById("speed-final")
       s.innerHTML = speed
     }
-    
-
 
 </script>
 
