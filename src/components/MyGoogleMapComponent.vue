@@ -515,6 +515,8 @@ import { Loader } from '@googlemaps/js-api-loader'
               center: airports[airport].center,
               radius: airports[airport].rad
             });
+
+            // airspace name displayed in UI when circle object is clicked 
             cityCircle.addListener("click", function() {
               console.log(airports[airport].name)
               var a = document.getElementById("airportClicked");

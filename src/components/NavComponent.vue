@@ -10,7 +10,7 @@
             <section class="nav-sections" id="links-section">
                 <section class="nav-lists">
                     <section class="links"><router-link to="/"><b id="link-text"><i class="fa fa-fw fa-home"></i></b></router-link></section>
-                    <section class="links"><router-link to="/"><b id="link-text">About</b></router-link></section>
+                    <section class="links"><router-link to="/about"><b id="link-text">About</b></router-link></section>
                     <section class="links"><router-link to="/weatherDisplay"><b id="link-text">Forecast</b></router-link></section>
                     <section class="links" id="nav-planner"><router-link to="/planner"><b id="link-text">Planner</b></router-link></section>
                 </section>
@@ -20,12 +20,6 @@
                     <ul>
                         <router-link to="/profile"><li><img src="../assets/login-icon.jpg" id="login-icon" /><img src="../assets/logininv-icon.png" id="logininv-icon"/></li></router-link>
                     </ul>
-                    <!-- <section class="dropdown" id="dropdown">
-                        <section class="dropdown-container">
-                            <router-link to="/login"><b id="menu-links">Log In</b></router-link>
-                            <router-link to="/signup"><p id="menu-links">Sign Up</p></router-link>
-                        </section>
-                    </section> -->
                 </section>
             </section>
         </section>
@@ -36,7 +30,6 @@
     .navbar {
         display: flex;
         flex-direction: row;
-        /*background-color: rgb(184, 255, 36);*/
         background-color: rgb(120, 255, 36);
         color: rgb(80, 79, 79);
         font-size: 32px;
@@ -51,7 +44,6 @@
     .nav-content-container {
         display: grid;
         grid-template-columns: 10% 80% 10%;
-        /*background-color: rgb(184, 255, 36);*/
         background-color:  rgb(120, 255, 36);
         width: 100%;
     }
@@ -200,76 +192,5 @@
 </style>
 
 <script>
-
-// export default {
-//     data() {
-//         return {
-//             user: this.$globalUser
-//         }
-//     }
-// }
-
-//import { watch } from 'vue';
-
-//import axios from 'axios';
-
-
-//   document.addEventListener('DOMContentLoaded', function() {
-//     var loginicon = document.getElementById('login-icon');
-//     var logininv = document.getElementById('logininv-icon');
-//     loginicon.onmouseover = function() { 
-//         loginicon.style.display = 'none';
-//         logininv.style.display = 'block';
-//         logininv.style.cursor = 'pointer';
-//     }
-//     loginicon.onmouseout = function() {
-//         loginicon.style.display = 'block';
-//         logininv.style.display = 'none';
-//     }
-
-
-//     var dropdown = document.getElementById("dropdown");
-//     var counter = 1;
-
-//     function showMenu() {
-//         if (counter % 2 == 0) {
-//             dropdown.style.display = "none";
-//         } else {
-//             dropdown.style.display = "block";
-//         }
-//         counter = counter + 1;
-//     }
-
-//     logininv.addEventListener("click", showMenu)
-    
-
-    // if (this.$globalUser !== "0") {
-    //     axios
-    //     .post("/getUsername", this.$globalUser)
-    //     .then((response) => {
-    //       const data = response.data;
-    //       console.log("Login outcome: ",data); //NEED TO REDIRECT
-    //     })
-    //     .catch (function (error) {
-    //         console.log("ERROR:", error);    
-    //     })
-    // }
-
-    // var x = document.getElementById("sticky");
-    // var topVal= x.offsetTop;
-    // function stickNav(x, topval) {
-    //         console.log("stick  nav called")
-    //         if (window.pageYOffset >= topval) {
-    //         x.classList.add("sticky");
-    //         console.log("making sticky")
-    //         } else {
-    //         x.classList.remove("sticky");
-    //         console.log("NOT making sticky")
-    //         }
-    //     }
-    // window.onscroll = function() {stickNav(x, topVal)};
-
-
-    // });
 
 </script>

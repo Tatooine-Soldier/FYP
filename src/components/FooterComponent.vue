@@ -59,21 +59,6 @@
 </style>
 
 <script>
-    // document.addEventListener('DOMContentLoaded', function() {
-  
 
-    // hide();
-
-    //     function hide() {
-    //         var loginPage = document.getElementById("login-page");
-    //         var f = document.getElementById("footer");
-    //         if (loginPage) {
-    //             f.style.visibility = "hidden";
-    //         } else {
-    //             f.style.visibility = "visible";
-    //         }
-    //     }
-
-    // })
 
 </script>
